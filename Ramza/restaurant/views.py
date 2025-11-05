@@ -240,16 +240,26 @@ def api_menu_items(request):
         menu_items = MenuItem.objects.filter(is_available=True).select_related('category')
         menu_items_list = []
         for item in menu_items:
+            # Safely handle image URL generation
+            image_url = None
+            try:
+                if item.image:
+                    image_url = item.image.url
+            except Exception as e:
+                print(f"Warning: Could not generate URL for menu item image {item.name}: {e}")
+                image_url = None
+                
             menu_items_list.append({
                 'id': item.id,
                 'name': item.name,
                 'description': item.description,
                 'price': float(item.price),
                 'category': item.category.name,
-                'image': item.image.url if item.image else None
+                'image': image_url
             })
         return JsonResponse({'menu_items': menu_items_list})
     except Exception as e:
+        print(f"Error in api_menu_items: {e}")
         return JsonResponse({'error': str(e)}, status=500)
 
 def api_categories(request):
@@ -258,13 +268,23 @@ def api_categories(request):
         categories = Category.objects.filter(is_active=True)
         categories_list = []
         for cat in categories:
+            # Safely handle image URL generation
+            image_url = None
+            try:
+                if cat.image:
+                    image_url = cat.image.url
+            except Exception as e:
+                print(f"Warning: Could not generate URL for category image {cat.name}: {e}")
+                image_url = None
+                
             categories_list.append({
                 'name': cat.name,
                 'description': cat.description,
-                'image': cat.image.url if cat.image else None
+                'image': image_url
             })
         return JsonResponse({'categories': categories_list})
     except Exception as e:
+        print(f"Error in api_categories: {e}")
         return JsonResponse({'error': str(e)}, status=500)
 
 def api_featured_items(request):
@@ -273,15 +293,25 @@ def api_featured_items(request):
         featured_items = MenuItem.objects.filter(is_featured=True, is_available=True)[:3]
         featured_list = []
         for item in featured_items:
+            # Safely handle image URL generation
+            image_url = None
+            try:
+                if item.image:
+                    image_url = item.image.url
+            except Exception as e:
+                print(f"Warning: Could not generate URL for featured item image {item.name}: {e}")
+                image_url = None
+                
             featured_list.append({
                 'id': item.id,
                 'name': item.name,
                 'description': item.description,
                 'price': float(item.price),
-                'image': item.image.url if item.image else None
+                'image': image_url
             })
         return JsonResponse({'featured_items': featured_list})
     except Exception as e:
+        print(f"Error in api_featured_items: {e}")
         return JsonResponse({'error': str(e)}, status=500)
 
 def api_site_settings(request):
@@ -289,6 +319,24 @@ def api_site_settings(request):
     try:
         site_settings = SiteSettings.objects.first()
         if site_settings:
+            # Safely handle logo URL
+            logo_url = None
+            try:
+                if site_settings.logo:
+                    logo_url = site_settings.logo.url
+            except Exception as e:
+                print(f"Warning: Could not generate URL for site logo: {e}")
+                logo_url = None
+                
+            # Safely handle favicon URL
+            favicon_url = None
+            try:
+                if site_settings.favicon:
+                    favicon_url = site_settings.favicon.url
+            except Exception as e:
+                print(f"Warning: Could not generate URL for site favicon: {e}")
+                favicon_url = None
+                
             settings_data = {
                 'site_name': site_settings.site_name,
                 'site_description': site_settings.site_description,
@@ -313,8 +361,8 @@ def api_site_settings(request):
                 'nav_cart_text': site_settings.nav_cart_text,
                 'footer_copyright': site_settings.footer_copyright,
                 'footer_description': site_settings.footer_description,
-                'logo': site_settings.logo.url if site_settings.logo else None,
-                'favicon': site_settings.favicon.url if site_settings.favicon else None,
+                'logo': logo_url,
+                'favicon': favicon_url,
             }
             return JsonResponse({'site_settings': settings_data})
         else:
@@ -348,6 +396,7 @@ def api_site_settings(request):
             }
             return JsonResponse({'site_settings': default_settings})
     except Exception as e:
+        print(f"Error in api_site_settings: {e}")
         return JsonResponse({'error': str(e)}, status=500)
 
 def api_content_sections(request):
@@ -356,6 +405,23 @@ def api_content_sections(request):
         content_sections = ContentSection.objects.filter(is_active=True)
         sections_data = {}
         for section in content_sections:
+            # Safely handle image URLs
+            image_url = None
+            try:
+                if section.image:
+                    image_url = section.image.url
+            except Exception as e:
+                print(f"Warning: Could not generate URL for content section image {section.section}: {e}")
+                image_url = None
+                
+            background_image_url = None
+            try:
+                if section.background_image:
+                    background_image_url = section.background_image.url
+            except Exception as e:
+                print(f"Warning: Could not generate URL for content section background image {section.section}: {e}")
+                background_image_url = None
+                
             sections_data[section.section] = {
                 'title': section.title,
                 'subtitle': section.subtitle,
@@ -365,13 +431,14 @@ def api_content_sections(request):
                 'extra_text_1': section.extra_text_1,
                 'extra_text_2': section.extra_text_2,
                 'extra_text_3': section.extra_text_3,
-                'image': section.image.url if section.image else None,
-                'background_image': section.background_image.url if section.background_image else None,
+                'image': image_url,
+                'background_image': background_image_url,
                 'meta_title': section.meta_title,
                 'meta_description': section.meta_description,
             }
         return JsonResponse({'content_sections': sections_data})
     except Exception as e:
+        print(f"Error in api_content_sections: {e}")
         return JsonResponse({'error': str(e)}, status=500)
 
 def api_site_images(request):
@@ -380,14 +447,24 @@ def api_site_images(request):
         site_images = SiteImage.objects.filter(is_active=True)
         images_data = {}
         for image in site_images:
+            # Safely handle image URL
+            image_url = None
+            try:
+                if image.image:
+                    image_url = image.image.url
+            except Exception as e:
+                print(f"Warning: Could not generate URL for site image {image.name}: {e}")
+                image_url = None
+                
             images_data[image.name] = {
-                'url': image.image.url if image.image else None,
+                'url': image_url,
                 'alt_text': image.alt_text,
                 'description': image.description,
                 'image_type': image.image_type,
             }
         return JsonResponse({'site_images': images_data})
     except Exception as e:
+        print(f"Error in api_site_images: {e}")
         return JsonResponse({'error': str(e)}, status=500)
 
 def api_testimonials(request):
@@ -396,14 +473,24 @@ def api_testimonials(request):
         testimonials = Testimonial.objects.filter(is_active=True)
         testimonials_data = []
         for testimonial in testimonials:
+            # Safely handle image URL
+            image_url = None
+            try:
+                if testimonial.image:
+                    image_url = testimonial.image.url
+            except Exception as e:
+                print(f"Warning: Could not generate URL for testimonial image {testimonial.customer_name}: {e}")
+                image_url = None
+                
             testimonials_data.append({
                 'id': testimonial.id,
                 'customer_name': testimonial.customer_name,
                 'customer_title': testimonial.customer_title,
                 'review': testimonial.review,
                 'rating': testimonial.rating,
-                'image': testimonial.image.url if testimonial.image else None,
+                'image': image_url,
             })
         return JsonResponse({'testimonials': testimonials_data})
     except Exception as e:
+        print(f"Error in api_testimonials: {e}")
         return JsonResponse({'error': str(e)}, status=500)
