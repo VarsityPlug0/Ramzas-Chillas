@@ -50,4 +50,10 @@
 - Improved start_server.py script error handling
 - Should resolve 404 errors for static assets
 
+## Deployment Triggered: Update build process to include frontend build
+- Modified render.yaml to include frontend build process
+- Added npm install and build commands to build process
+- Ensures frontend assets are built during Render deployment
+- Should resolve missing static assets issue
+
 This change will trigger a new deployment on Render.
