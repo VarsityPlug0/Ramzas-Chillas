@@ -6,4 +6,10 @@
 - CSS: /static/assets/index-e285a6a4.css
 - Enhanced update script to find latest files by modification time
 
+## Deployment Triggered: Fix missing images issue
+- Modified .gitignore to include media files in deployment
+- Added media files to Git repository
+- Media files now properly deployed to Render
+- Menu items and products should now display images correctly
+
 This change will trigger a new deployment on Render.
