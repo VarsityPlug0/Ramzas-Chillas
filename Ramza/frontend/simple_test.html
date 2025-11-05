@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Simple Test</title>
+</head>
+<body>
+    <div id="root">
+        <h1>Loading...</h1>
+    </div>
+    
+    <script type="module">
+        import React from 'react';
+        import { createRoot } from 'react-dom/client';
+        
+        // Simple test component
+        function TestComponent() {
+            const [orders, setOrders] = React.useState([]);
+            const [loading, setLoading] = React.useState(true);
+            const [error, setError] = React.useState('');
+            
+            React.useEffect(() => {
+                fetchOrders();
+            }, []);
+            
+            const fetchOrders = async () => {
+                try {
+                    setLoading(true);
+                    setError('');
+                    console.log('Fetching orders from /api/v1/orders/');
+                    const response = await fetch('/api/v1/orders/');
+                    console.log('Response:', response);
+                    const data = await response.json();
+                    console.log('Data:', data);
+                    if (data.success) {
+                        setOrders(data.orders);
+                    } else {
+                        setError(data.error || 'Failed to fetch orders');
+                    }
+                } catch (err) {
+                    console.error('Error fetching orders:', err);
+                    setError('Failed to fetch orders: ' + err.message);
+                } finally {
+                    setLoading(false);
+                }
+            };
+            
+            if (loading) {
+                return React.createElement('div', null, 'Loading orders...');
+            }
+            
+            if (error) {
+                return React.createElement('div', { style: { color: 'red' } }, 'Error: ' + error);
+            }
+            
+            return React.createElement('div', null,
+                React.createElement('h1', null, 'Orders (' + orders.length + ')'),
+                orders.map(order => 
+                    React.createElement('div', { key: order.id, style: { border: '1px solid #ccc', margin: '10px', padding: '10px' } },
+                        React.createElement('h3', null, 'Order #' + order.order_number),
+                        React.createElement('p', null, order.customer_name + ' - ' + order.customer_phone),
+                        React.createElement('p', null, 'Status: ' + order.status_display),
+                        React.createElement('p', null, 'Total: R' + order.total)
+                    )
+                )
+            );
+        }
+        
+        // Render the component
+        const root = createRoot(document.getElementById('root'));
+        root.render(React.createElement(TestComponent));
+    </script>
+</body>
+</html>

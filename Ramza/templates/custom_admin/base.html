@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Ramza's Chillas Admin{% endblock %}</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Custom Styles -->
+    <style>
+        .admin-sidebar {
+            background-color: #1f2937;
+        }
+        .sidebar-link:hover {
+            background-color: #374151;
+        }
+        .stats-card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #f59e0b, #ea580c);
+            display: inline-block;
+            z-index: 10;
+            position: relative;
+        }
+        
+        /* Mobile responsive styles */
+        @media (max-width: 1024px) {
+            .sidebar-mobile {
+                position: fixed;
+                top: 0;
+                left: -100%;
+                width: 80%;
+                height: 100vh;
+                z-index: 1000;
+                transition: left 0.3s ease;
+            }
+            .sidebar-mobile.active {
+                left: 0;
+            }
+            .overlay {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0,0,0,0.5);
+                z-index: 999;
+            }
+            .overlay.active {
+                display: block;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    {% if user.is_authenticated and user.is_staff %}
+    <!-- Mobile Overlay -->
+    <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+    
+    <!-- Hamburger Menu -->
+    <div class="fixed top-4 left-4 z-50 lg:hidden">
+        <button class="text-white bg-gray-800 p-2 rounded" onclick="toggleSidebar()">
+            <i class="fas fa-bars"></i>
+        </button>
+    </div>
+    
+    <div class="flex h-screen">
+        <!-- Sidebar -->
+        <aside class="w-64 admin-sidebar sidebar-mobile lg:static" id="sidebar">
+            <div class="p-4">
+                <h1 class="text-white text-xl font-bold">Ramza's Admin</h1>
+                <p class="text-gray-400 text-sm mt-1">Welcome, {{ user.first_name|default:user.username }}!</p>
+            </div>
+            
+            <nav class="mt-4">
+                <a href="{% url 'custom_admin:dashboard' %}" class="sidebar-link flex items-center px-4 py-3 text-gray-300 hover:text-white">
+                    <i class="fas fa-tachometer-alt mr-3"></i>
+                    Dashboard
+                </a>
+                
+                <a href="{% url 'custom_admin:menu_items' %}" class="sidebar-link flex items-center px-4 py-3 text-gray-300 hover:text-white">
+                    <i class="fas fa-utensils mr-3"></i>
+                    Menu Items
+                </a>
+                
+                <a href="{% url 'custom_admin:categories' %}" class="sidebar-link flex items-center px-4 py-3 text-gray-300 hover:text-white">
+                    <i class="fas fa-tags mr-3"></i>
+                    Categories
+                </a>
+                
+                <a href="{% url 'custom_admin:orders' %}" class="sidebar-link flex items-center px-4 py-3 text-gray-300 hover:text-white">
+                    <i class="fas fa-shopping-cart mr-3"></i>
+                    Orders
+                </a>
+                
+                <a href="{% url 'custom_admin:all_images' %}" class="sidebar-link flex items-center px-4 py-3 text-gray-300 hover:text-white">
+                    <i class="fas fa-images mr-3"></i>
+                    All Images
+                </a>
+                
+                <a href="{% url 'custom_admin:site_settings' %}" class="sidebar-link flex items-center px-4 py-3 text-gray-300 hover:text-white">
+                    <i class="fas fa-cog mr-3"></i>
+                    Settings
+                </a>
+                
+                <div class="border-t border-gray-700 mt-4 pt-4">
+                    <a href="{% url 'frontend' %}" target="_blank" class="sidebar-link flex items-center px-4 py-3 text-gray-300 hover:text-white">
+                        <i class="fas fa-external-link-alt mr-3"></i>
+                        View Site
+                    </a>
+                    
+                    <a href="{% url 'custom_admin:logout' %}" class="sidebar-link flex items-center px-4 py-3 text-gray-300 hover:text-white">
+                        <i class="fas fa-sign-out-alt mr-3"></i>
+                        Logout
+                    </a>
+                </div>
+            </nav>
+        </aside>
+        
+        <!-- Main Content -->
+        <main class="flex-1 overflow-y-auto">
+            <!-- Top Bar -->
+            <header class="bg-white shadow">
+                <div class="flex justify-between items-center p-4">
+                    <h2 class="text-xl font-bold text-gray-800">{% block page_title %}Dashboard{% endblock %}</h2>
+                    <div class="flex items-center space-x-3">
+                        <span class="text-sm text-gray-600 hidden sm:block">Welcome, {{ user.first_name|default:user.username }}!</span>
+                        <div class="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center text-white">
+                            <i class="fas fa-user"></i>
+                        </div>
+                    </div>
+                </div>
+            </header>
+            
+            <!-- Messages -->
+            {% if messages %}
+                <div class="p-4">
+                    {% for message in messages %}
+                        <div class="mb-3 p-3 rounded {% if message.tags == 'success' %}bg-green-100 text-green-800{% elif message.tags == 'error' %}bg-red-100 text-red-800{% else %}bg-blue-100 text-blue-800{% endif %}">
+                            <div class="flex items-center">
+                                <i class="fas {% if message.tags == 'success' %}fa-check-circle{% elif message.tags == 'error' %}fa-exclamation-circle{% else %}fa-info-circle{% endif %} mr-2"></i>
+                                {{ message }}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+            
+            <!-- Page Content -->
+            <div class="p-4">
+                {% block content %}{% endblock %}
+            </div>
+        </main>
+    </div>
+    {% else %}
+        {% block login_content %}{% endblock %}
+    {% endif %}
+    
+    <!-- JavaScript -->
+    <script>
+        // Auto-hide messages after 5 seconds
+        document.addEventListener('DOMContentLoaded', function() {
+            const messages = document.querySelectorAll('[class*="bg-green-100"], [class*="bg-red-100"], [class*="bg-blue-100"]');
+            messages.forEach(function(message) {
+                setTimeout(function() {
+                    message.style.opacity = '0';
+                    setTimeout(function() {
+                        message.remove();
+                    }, 300);
+                }, 5000);
+            });
+        });
+        
+        // Mobile sidebar toggle
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('overlay');
+            
+            sidebar.classList.toggle('active');
+            overlay.classList.toggle('active');
+        }
+    </script>
+    
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,391 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{% if content_sections.menu_hero.meta_title %}{{ content_sections.menu_hero.meta_title }}{% else %}Menu - Ramza's Chillas{% endif %}{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="relative bg-gradient-to-br from-gray-800 via-gray-900 to-black overflow-hidden">
+    <!-- Background Pattern -->
+    <div class="absolute inset-0 opacity-10">
+        <div class="absolute inset-0" style="background-image: url('data:image/svg+xml,&lt;svg xmlns=&quot;http://www.w3.org/2000/svg&quot; viewBox=&quot;0 0 100 100&quot;&gt;&lt;defs&gt;&lt;pattern id=&quot;grain&quot; width=&quot;100&quot; height=&quot;100&quot; patternUnits=&quot;userSpaceOnUse&quot;&gt;&lt;circle cx=&quot;25&quot; cy=&quot;25&quot; r=&quot;1&quot; fill=&quot;%23ffffff&quot;/&gt;&lt;circle cx=&quot;75&quot; cy=&quot;75&quot; r=&quot;1&quot; fill=&quot;%23ffffff&quot;/&gt;&lt;circle cx=&quot;50&quot; cy=&quot;10&quot; r=&quot;0.5&quot; fill=&quot;%23ffffff&quot;/&gt;&lt;circle cx=&quot;10&quot; cy=&quot;60&quot; r=&quot;0.5&quot; fill=&quot;%23ffffff&quot;/&gt;&lt;circle cx=&quot;90&quot; cy=&quot;30&quot; r=&quot;0.5&quot; fill=&quot;%23ffffff&quot;/&gt;&lt;/pattern&gt;&lt;/defs&gt;&lt;rect width=&quot;100&quot; height=&quot;100&quot; fill=&quot;url(%23grain)&quot;/&gt;&lt;/svg&gt;'); background-size: 100px 100px;"></div>
+    </div>
+    
+    <!-- Add a color overlay for the brand theme -->
+    <div class="absolute inset-0 bg-gradient-to-br from-orange-600/20 via-amber-500/10 to-red-600/20"></div>
+    
+    <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
+        <div class="text-center">
+            <div class="inline-flex items-center px-3 py-1.5 md:px-4 md:py-2 bg-white/25 backdrop-blur-sm rounded-full text-white text-sm font-medium mb-4 md:mb-6 border border-white/20">
+                <i class="fas fa-fire mr-1.5 md:mr-2 text-orange-300"></i>
+                {% if content_sections.menu_hero.extra_text_1 %}
+                    {{ content_sections.menu_hero.extra_text_1|safe }}
+                {% else %}
+                    Fresh • Hot • Delicious
+                {% endif %}
+            </div>
+            <h1 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4 md:mb-6 drop-shadow-lg">
+                {% if content_sections.menu_hero.title %}
+                    {{ content_sections.menu_hero.title|safe }}
+                {% else %}
+                    Our <span class="text-gradient bg-gradient-to-r from-orange-300 to-yellow-300 bg-clip-text text-transparent drop-shadow-lg">Chill</span> Menu
+                {% endif %}
+            </h1>
+            <p class="text-base sm:text-lg md:text-xl text-white max-w-2xl mx-auto mb-6 md:mb-8 drop-shadow-md">
+                {% if content_sections.menu_hero.subtitle %}
+                    {{ content_sections.menu_hero.subtitle|safe }}
+                {% else %}
+                    Discover our signature chillas, crafted with the finest ingredients and served with unmatched flavor
+                {% endif %}
+            </p>
+            
+            <!-- Search Bar -->
+            <div class="max-w-md mx-auto relative">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <i class="fas fa-search text-gray-400"></i>
+                </div>
+                <input type="text" id="menuSearch" placeholder="Search our menu..." 
+                       class="w-full pl-10 pr-4 py-2.5 md:py-3 bg-white/95 backdrop-blur-sm border-0 rounded-2xl focus:ring-2 focus:ring-orange-400 focus:outline-none text-gray-800 placeholder-gray-500 text-sm md:text-base">
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Menu Content -->
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-16">
+    <!-- Category Filter -->
+    <div class="mb-8 md:mb-12">
+        <div class="flex flex-wrap justify-center gap-2 md:gap-3">
+            <button class="category-btn active px-4 py-2 md:px-6 md:py-3 rounded-2xl font-semibold text-sm md:text-base transition-all duration-300" data-category="All">
+                <i class="fas fa-th-large mr-1.5 md:mr-2"></i>All Items
+            </button>
+            {% for category in categories %}
+            <button class="category-btn px-4 py-2 md:px-6 md:py-3 rounded-2xl font-semibold text-sm md:text-base transition-all duration-300" data-category="{{ category }}">
+                {% if category == 'Burgers' %}
+                    <i class="fas fa-hamburger mr-1.5 md:mr-2"></i>
+                {% elif category == 'Pizzas' %}
+                    <i class="fas fa-pizza-slice mr-1.5 md:mr-2"></i>
+                {% elif category == 'Drinks' %}
+                    <i class="fas fa-glass-cheers mr-1.5 md:mr-2"></i>
+                {% elif category == 'Sides' %}
+                    <i class="fas fa-cookie-bite mr-1.5 md:mr-2"></i>
+                {% else %}
+                    <i class="fas fa-utensils mr-1.5 md:mr-2"></i>
+                {% endif %}
+                {{ category }}
+            </button>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Menu Items Grid -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8" id="menu-items">
+        {% for item in menu_items %}
+        <div class="menu-item group" data-category="{{ item.category }}" data-name="{{ item.name|lower }}">
+            <div class="bg-white rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-500 overflow-hidden group-hover:-translate-y-2">
+                <!-- Image Container -->
+                <div class="relative overflow-hidden">
+                    <div class="aspect-w-4 aspect-h-3">
+                        <!-- Real food image -->
+                        {% if item.image %}
+                            <img src="{{ item.image.url }}" alt="{{ item.name }}" class="w-full h-40 md:h-48 object-cover group-hover:scale-110 transition-transform duration-300">
+                        {% else %}
+                            <img src="{% static 'images/default-menu-item.jpg' %}" alt="{{ item.name }}" class="w-full h-40 md:h-48 object-cover group-hover:scale-110 transition-transform duration-300">
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Category Badge -->
+                    <div class="absolute top-3 left-3 md:top-4 md:left-4">
+                        <span class="inline-flex items-center px-2.5 py-0.5 md:px-3 md:py-1 rounded-full text-xs font-semibold bg-white/95 backdrop-blur-sm text-gray-800 border border-gray-200">
+                            {{ item.category }}
+                        </span>
+                    </div>
+                    
+                    <!-- Quick Add Button -->
+                    <div class="absolute top-3 right-3 md:top-4 md:right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                        <button class="quick-add-btn w-8 h-8 md:w-10 md:h-10 bg-white/95 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-primary hover:text-white transition-colors duration-200 border border-gray-200"
+                                data-id="{{ item.id }}" 
+                                data-name="{{ item.name }}" 
+                                data-price="{{ item.price }}">
+                            <i class="fas fa-plus text-xs md:text-sm text-gray-700"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Content -->
+                <div class="p-4 md:p-6">
+                    <div class="flex items-start justify-between mb-2 md:mb-3">
+                        <h3 class="text-base md:text-xl font-bold text-gray-900 group-hover:text-primary transition-colors duration-200">
+                            {{ item.name }}
+                        </h3>
+                        <div class="flex items-center">
+                            <span class="text-xl md:text-2xl font-bold text-primary">R{{ item.price }}</span>
+                        </div>
+                    </div>
+                    
+                    <p class="text-gray-600 text-xs md:text-sm mb-4 md:mb-6 line-clamp-2">
+                        {{ item.description }}
+                    </p>
+                    
+                    <!-- Add to Cart Button -->
+                    <button class="add-to-cart-btn w-full bg-gradient-to-r from-primary to-primary-dark hover:from-primary-dark hover:to-primary text-white font-semibold py-2.5 md:py-3 px-4 md:px-6 rounded-2xl transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50 text-sm md:text-base"
+                            data-id="{{ item.id }}" 
+                            data-name="{{ item.name }}" 
+                            data-price="{{ item.price }}">
+                        <i class="fas fa-shopping-cart mr-1.5 md:mr-2"></i>
+                        Add to Cart
+                    </button>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    
+    <!-- Empty State -->
+    <div id="empty-state" class="hidden text-center py-12 md:py-16">
+        <div class="max-w-md mx-auto">
+            <div class="w-16 h-16 md:w-24 md:h-24 mx-auto bg-gray-100 rounded-full flex items-center justify-center mb-4 md:mb-6">
+                <i class="fas fa-search text-2xl md:text-3xl text-gray-400"></i>
+            </div>
+            <h3 class="text-lg md:text-xl font-semibold text-gray-900 mb-2">No items found</h3>
+            <p class="text-gray-600 text-sm md:text-base">Try adjusting your search or filter to find what you're looking for.</p>
+        </div>
+    </div>
+</div>
+
+<!-- Toast Notification -->
+<div id="toast" class="fixed bottom-4 right-4 transform translate-y-full transition-transform duration-300 z-50">
+    <div class="bg-green-500 text-white px-4 py-2 md:px-6 md:py-3 rounded-2xl shadow-lg flex items-center text-sm md:text-base">
+        <i class="fas fa-check-circle mr-2"></i>
+        <span id="toast-message">Item added to cart!</span>
+    </div>
+</div>
+
+<style>
+/* Category Button Styles */
+.category-btn {
+    background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+    color: #6b7280;
+    border: 2px solid transparent;
+}
+
+.category-btn:hover {
+    background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(251, 191, 36, 0.4);
+}
+
+.category-btn.active {
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    color: white;
+    border-color: #f59e0b;
+    box-shadow: 0 8px 20px rgba(245, 158, 11, 0.4);
+}
+
+/* Menu Item Animations */
+.menu-item {
+    opacity: 1;
+    transform: scale(1);
+    transition: all 0.3s ease;
+}
+
+.menu-item.fade-out {
+    opacity: 0;
+    transform: scale(0.95);
+}
+
+/* Line Clamp */
+.line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* Responsive adjustments for small screens */
+@media (max-width: 640px) {
+    .category-btn {
+        padding: 0.5rem 1rem;
+        font-size: 0.875rem;
+    }
+    
+    .menu-item .p-6 {
+        padding: 1rem;
+    }
+    
+    .add-to-cart-btn span {
+        display: none;
+    }
+    
+    .add-to-cart-btn i {
+        margin-right: 0;
+    }
+}
+
+/* Adjustments for very small screens */
+@media (max-width: 480px) {
+    .hero-title {
+        font-size: 2rem;
+    }
+    
+    .hero-subtitle {
+        font-size: 1rem;
+    }
+    
+    .category-btn {
+        padding: 0.4rem 0.75rem;
+        font-size: 0.75rem;
+    }
+    
+    .menu-grid {
+        gap: 1rem;
+    }
+}
+</style>
+
+<script>
+// Category filtering
+document.querySelectorAll('.category-btn').forEach(button => {
+    button.addEventListener('click', function() {
+        // Remove active class from all buttons
+        document.querySelectorAll('.category-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        
+        // Add active class to clicked button
+        this.classList.add('active');
+        
+        // Get selected category
+        const category = this.dataset.category;
+        
+        // Filter menu items
+        document.querySelectorAll('.menu-item').forEach(item => {
+            if (category === 'All' || item.dataset.category === category) {
+                item.style.display = 'block';
+                item.classList.remove('fade-out');
+            } else {
+                item.classList.add('fade-out');
+                setTimeout(() => {
+                    item.style.display = 'none';
+                }, 300);
+            }
+        });
+        
+        // Check if any items are visible
+        const visibleItems = document.querySelectorAll('.menu-item:not([style*="display: none"])');
+        const emptyState = document.getElementById('empty-state');
+        
+        if (visibleItems.length === 0) {
+            emptyState.classList.remove('hidden');
+        } else {
+            emptyState.classList.add('hidden');
+        }
+    });
+});
+
+// Search functionality
+document.getElementById('menuSearch').addEventListener('input', function() {
+    const searchTerm = this.value.toLowerCase();
+    
+    document.querySelectorAll('.menu-item').forEach(item => {
+        const itemName = item.dataset.name;
+        if (itemName.includes(searchTerm)) {
+            item.style.display = 'block';
+            item.classList.remove('fade-out');
+        } else {
+            item.classList.add('fade-out');
+            setTimeout(() => {
+                item.style.display = 'none';
+            }, 300);
+        }
+    });
+    
+    // Check if any items are visible
+    const visibleItems = document.querySelectorAll('.menu-item:not([style*="display: none"])');
+    const emptyState = document.getElementById('empty-state');
+    
+    if (visibleItems.length === 0 && searchTerm.length > 0) {
+        emptyState.classList.remove('hidden');
+    } else {
+        emptyState.classList.add('hidden');
+    }
+});
+
+// Add to cart functionality
+document.querySelectorAll('.add-to-cart-btn, .quick-add-btn').forEach(button => {
+    button.addEventListener('click', function() {
+        const id = this.dataset.id;
+        const name = this.dataset.name;
+        const price = parseFloat(this.dataset.price);
+        // Get category from parent element or data attribute
+        const category = this.closest('.menu-item')?.dataset.category || 'Menu Item';
+        
+        // Add to cart logic
+        const item = {
+            id: id,
+            name: name,
+            price: price,
+            category: category,
+            quantity: 1
+        };
+        
+        // Add to cart
+        if (typeof addToCart === 'function') {
+            addToCart(item);
+        } else {
+            // Fallback if addToCart function is not available
+            let cart = JSON.parse(localStorage.getItem('ramza_cart') || '[]');
+            const existingItem = cart.find(cartItem => cartItem.id == id);
+            
+            if (existingItem) {
+                existingItem.quantity += 1;
+            } else {
+                cart.push(item);
+            }
+            
+            localStorage.setItem('ramza_cart', JSON.stringify(cart));
+            
+            // Update cart count
+            updateCartCount();
+            
+            // Show toast notification
+            showToast(`${name} added to cart!`);
+        }
+    });
+});
+
+// Update cart count
+function updateCartCount() {
+    const cart = JSON.parse(localStorage.getItem('ramza_cart') || '[]');
+    const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+    const cartCountElement = document.querySelector('.cart-count');
+    if (cartCountElement) {
+        cartCountElement.textContent = totalItems;
+        cartCountElement.style.display = totalItems > 0 ? 'flex' : 'none';
+    }
+}
+
+// Show toast notification
+function showToast(message) {
+    const toast = document.getElementById('toast');
+    const toastMessage = document.getElementById('toast-message');
+    
+    if (toast && toastMessage) {
+        toastMessage.textContent = message;
+        toast.classList.remove('translate-y-full');
+        toast.classList.add('translate-y-0');
+        
+        setTimeout(() => {
+            toast.classList.remove('translate-y-0');
+            toast.classList.add('translate-y-full');
+        }, 3000);
+    }
+}
+
+// Initialize cart count on page load
+document.addEventListener('DOMContentLoaded', function() {
+    updateCartCount();
+});
+</script>
+{% endblock %}

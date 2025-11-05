@@ -1,0 +1,458 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="relative bg-gradient-to-br from-gray-800 via-gray-900 to-black text-white overflow-hidden">
+    <!-- Background Pattern -->
+    <div class="absolute inset-0 opacity-10">
+        <div class="absolute inset-0" style="background-image: url('data:image/svg+xml,&lt;svg xmlns=&quot;http://www.w3.org/2000/svg&quot; viewBox=&quot;0 0 100 100&quot;&gt;&lt;defs&gt;&lt;pattern id=&quot;grain&quot; width=&quot;100&quot; height=&quot;100&quot; patternUnits=&quot;userSpaceOnUse&quot;&gt;&lt;circle cx=&quot;25&quot; cy=&quot;25&quot; r=&quot;1&quot; fill=&quot;%23ffffff&quot;/&gt;&lt;circle cx=&quot;75&quot; cy=&quot;75&quot; r=&quot;1&quot; fill=&quot;%23ffffff&quot;/&gt;&lt;circle cx=&quot;50&quot; cy=&quot;10&quot; r=&quot;0.5&quot; fill=&quot;%23ffffff&quot;/&gt;&lt;circle cx=&quot;10&quot; cy=&quot;60&quot; r=&quot;0.5&quot; fill=&quot;%23ffffff&quot;/&gt;&lt;circle cx=&quot;90&quot; cy=&quot;30&quot; r=&quot;0.5&quot; fill=&quot;%23ffffff&quot;/&gt;&lt;/pattern&gt;&lt;/defs&gt;&lt;rect width=&quot;100&quot; height=&quot;100&quot; fill=&quot;url(%23grain)&quot;/&gt;&lt;/svg&gt;'); background-size: 100px 100px;"></div>
+    </div>
+    
+    <!-- Add a color overlay for the brand theme -->
+    <div class="absolute inset-0 bg-gradient-to-br from-orange-600/20 via-amber-500/10 to-red-600/20"></div>
+    
+    <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24 lg:py-32">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12 items-center">
+            <!-- Content -->
+            <div class="text-center lg:text-left">
+                <h1 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-4 md:mb-6 animate-fade-in drop-shadow-lg">
+                    {% if content_sections.home_hero.title %}
+                        {{ content_sections.home_hero.title|safe }}
+                    {% else %}
+                        Chill Vibes & <span class="text-transparent bg-clip-text bg-gradient-to-r from-orange-300 to-yellow-300 drop-shadow-lg">Hot Chillas</span>
+                    {% endif %}
+                </h1>
+                
+                <p class="text-lg sm:text-xl lg:text-2xl text-white mb-6 md:mb-8 animate-fade-in drop-shadow-md">
+                    {% if content_sections.home_hero.subtitle %}
+                        {{ content_sections.home_hero.subtitle|safe }}
+                    {% else %}
+                        Experience the ultimate chill spot with the hottest food in town. Fresh ingredients, cool atmosphere, amazing taste.
+                    {% endif %}
+                </p>
+                
+                <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start animate-fade-in">
+                    <a href="{% if content_sections.home_hero.button_url %}{{ content_sections.home_hero.button_url }}{% else %}/menu/{% endif %}" class="bg-primary-500 hover:bg-primary-600 text-white px-6 py-3 md:px-8 md:py-4 rounded-2xl font-semibold text-base md:text-lg transition-all duration-300 transform hover:scale-105 hover:shadow-2xl flex items-center justify-center space-x-2">
+                        <i class="fas fa-fire"></i>
+                        <span>{% if content_sections.home_hero.button_text %}{{ content_sections.home_hero.button_text }}{% else %}Order Now{% endif %}</span>
+                    </a>
+                    <a href="#features" class="bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white px-6 py-3 md:px-8 md:py-4 rounded-2xl font-semibold text-base md:text-lg transition-all duration-300 border border-white/20 flex items-center justify-center space-x-2">
+                        <i class="fas fa-play"></i>
+                        <span>Learn More</span>
+                    </a>
+                </div>
+                
+                <!-- Stats -->
+                <div class="grid grid-cols-3 gap-4 md:gap-6 mt-8 md:mt-12 animate-fade-in">
+                    <div class="text-center">
+                        <div class="text-2xl md:text-3xl font-bold">1000+</div>
+                        <div class="text-white/90 text-xs sm:text-sm">Happy Customers</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-2xl md:text-3xl font-bold">25min</div>
+                        <div class="text-white/90 text-xs sm:text-sm">Avg Delivery</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-2xl md:text-3xl font-bold">4.9★</div>
+                        <div class="text-white/90 text-xs sm:text-sm">Rating</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Hero Image/Illustration -->
+            <div class="relative animate-fade-in">
+              <div class="relative w-full max-w-lg mx-auto">
+                <!-- Ramza's Chillas Signature Stacked Burger -->
+                <div class="relative w-full h-64 sm:h-80 md:h-96 bg-white rounded-3xl shadow-2xl overflow-hidden transform rotate-3 hover:rotate-0 transition-transform duration-500 group">
+                  <!-- Featured Burger Image -->
+                  <div class="absolute inset-0 flex items-center justify-center">
+                    <img src="{% static 'images/pork-rib-kota.jpeg' %}" alt="Ramza's Chillas Signature Stacked Burger" 
+                         class="w-full h-full object-cover rounded-2xl group-hover:scale-105 transition-transform duration-500">
+                    <!-- Overlay with branding -->
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/30 rounded-2xl flex items-center justify-center p-0">
+                      <!-- Restaurant Logo -->
+                      {% if site_settings and site_settings.logo %}
+                        <img src="{{ site_settings.logo.url }}" alt="{{ site_settings.site_name }} Logo" 
+                             class="absolute inset-0 w-full h-full object-cover rounded-2xl">
+                      {% endif %}
+                    </div>
+                  </div>
+                </div>
+                
+                <!-- Floating elements -->
+                <div class="absolute -top-4 -right-4 sm:-top-6 sm:-right-6 w-12 h-12 sm:w-20 sm:h-20 bg-yellow-400 rounded-2xl shadow-lg flex items-center justify-center animate-bounce">
+                  <i class="fas fa-star text-white text-lg sm:text-2xl"></i>
+                </div>
+                <div class="absolute -bottom-3 -left-3 sm:-bottom-4 sm:-left-4 w-10 h-10 sm:w-16 sm:h-16 bg-red-500 rounded-2xl shadow-lg flex items-center justify-center animate-pulse">
+                  <i class="fas fa-heart text-white text-base sm:text-xl"></i>
+                </div>
+              </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section id="features" class="py-12 sm:py-16 md:py-20 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-12 md:mb-16">
+            <h2 class="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-4 md:mb-6">
+                {% if content_sections.home_features.title %}
+                    {{ content_sections.home_features.title|safe }}
+                {% else %}
+                    Why Choose Ramza's Chillas?
+                {% endif %}
+            </h2>
+            <p class="text-base sm:text-lg md:text-xl text-gray-600 max-w-3xl mx-auto">
+                {% if content_sections.home_features.description %}
+                    {{ content_sections.home_features.description|safe }}
+                {% else %}
+                    Chill atmosphere, hot food, cool service - we're committed to providing you with the best experience through quality, speed, and unmatched vibes.
+                {% endif %}
+            </p>
+        </div>
+        
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+            <!-- Feature 1 -->
+            <div class="group">
+                <div class="bg-white rounded-3xl p-6 md:p-8 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-100">
+                    <div class="w-12 h-12 md:w-16 md:h-16 bg-gradient-to-br from-secondary-400 to-secondary-600 rounded-2xl flex items-center justify-center mb-4 md:mb-6 group-hover:scale-110 transition-transform duration-300">
+                        <i class="fas fa-clock text-white text-xl md:text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl md:text-2xl font-bold text-gray-900 mb-3 md:mb-4">Chill Delivery</h3>
+                    <p class="text-gray-600 leading-relaxed text-sm md:text-base">Relaxed delivery in 25-30 minutes. We take our time to ensure your food arrives hot, fresh, and perfect - no rushing, just quality.</p>
+                    <div class="mt-4 md:mt-6">
+                        <div class="flex items-center text-xs sm:text-sm text-gray-500">
+                            <i class="fas fa-check-circle text-green-500 mr-2"></i>
+                            <span>Average 27min delivery</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Feature 2 -->
+            <div class="group">
+                <div class="bg-white rounded-3xl p-6 md:p-8 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-100">
+                    <div class="w-12 h-12 md:w-16 md:h-16 bg-gradient-to-br from-primary-400 to-primary-600 rounded-2xl flex items-center justify-center mb-4 md:mb-6 group-hover:scale-110 transition-transform duration-300">
+                        <i class="fas fa-award text-white text-xl md:text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl md:text-2xl font-bold text-gray-900 mb-3 md:mb-4">Quality Chillas</h3>
+                    <p class="text-gray-600 leading-relaxed text-sm md:text-base">Fresh ingredients with that chill factor. We source locally and prepare everything to order for the best taste and that laid-back island vibe.</p>
+                    <div class="mt-4 md:mt-6">
+                        <div class="flex items-center text-xs sm:text-sm text-gray-500">
+                            <i class="fas fa-check-circle text-green-500 mr-2"></i>
+                            <span>100% fresh ingredients</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Feature 3 -->
+            <div class="group">
+                <div class="bg-white rounded-3xl p-6 md:p-8 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-100">
+                    <div class="w-12 h-12 md:w-16 md:h-16 bg-gradient-to-br from-green-400 to-green-600 rounded-2xl flex items-center justify-center mb-4 md:mb-6 group-hover:scale-110 transition-transform duration-300">
+                        <i class="fas fa-truck text-white text-xl md:text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl md:text-2xl font-bold text-gray-900 mb-3 md:mb-4">Free Chill Zone</h3>
+                    <p class="text-gray-600 leading-relaxed text-sm md:text-base">Free delivery within our chill radius. No minimum order required - we believe good food should be accessible to everyone in the neighborhood.</p>
+                    <div class="mt-4 md:mt-6">
+                        <div class="flex items-center text-xs sm:text-sm text-gray-500">
+                            <i class="fas fa-check-circle text-green-500 mr-2"></i>
+                            <span>5km radius coverage</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Categories Section -->
+<section class="py-12 sm:py-16 md:py-20 bg-gray-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-12 md:mb-16">
+            <h2 class="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-4 md:mb-6">Browse Our Chill Menu</h2>
+            <p class="text-base sm:text-lg md:text-xl text-gray-600">Discover our delicious categories of fresh, made-to-order food with island vibes</p>
+        </div>
+        
+        <div class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+            <!-- Category 1 -->
+            <a href="/menu/?category={{ categories.0.name|lower }}" class="group">
+                <div class="relative overflow-hidden rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:scale-105">
+                    <div class="h-32 sm:h-40 md:h-48 bg-gradient-to-br from-red-400 to-red-600">
+                        {% if categories.0.image %}
+                            <img src="{{ categories.0.image.url }}" alt="{{ categories.0.name }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300">
+                        {% else %}
+                            <img src="{% static 'images/default-category.jpg' %}" alt="{{ categories.0.name }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300">
+                        {% endif %}
+                    </div>
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/75 to-transparent"></div>
+                    <div class="absolute bottom-0 left-0 right-0 p-4 md:p-6 text-white">
+                        <h3 class="text-base md:text-xl font-bold mb-1">{{ categories.0.name }}</h3>
+                        <p class="text-xs md:text-sm opacity-90">{{ categories.0.description|truncatewords:3 }}</p>
+                    </div>
+                </div>
+            </a>
+            
+            <!-- Category 2 -->
+            <a href="/menu/?category={{ categories.1.name|lower }}" class="group">
+                <div class="relative overflow-hidden rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:scale-105">
+                    <div class="h-32 sm:h-40 md:h-48 bg-gradient-to-br from-red-400 to-red-600">
+                        {% if categories.1.image %}
+                            <img src="{{ categories.1.image.url }}" alt="{{ categories.1.name }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300">
+                        {% else %}
+                            <img src="{% static 'images/default-category.jpg' %}" alt="{{ categories.1.name }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300">
+                        {% endif %}
+                    </div>
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/75 to-transparent"></div>
+                    <div class="absolute bottom-0 left-0 right-0 p-4 md:p-6 text-white">
+                        <h3 class="text-base md:text-xl font-bold mb-1">{{ categories.1.name }}</h3>
+                        <p class="text-xs md:text-sm opacity-90">{{ categories.1.description|truncatewords:3 }}</p>
+                    </div>
+                </div>
+            </a>
+            
+            <!-- Category 3 -->
+            <a href="/menu/?category={{ categories.2.name|lower }}" class="group">
+                <div class="relative overflow-hidden rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:scale-105">
+                    <div class="h-32 sm:h-40 md:h-48 bg-gradient-to-br from-blue-400 to-blue-600">
+                        {% if categories.2.image %}
+                            <img src="{{ categories.2.image.url }}" alt="{{ categories.2.name }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300">
+                        {% else %}
+                            <img src="{% static 'images/default-category.jpg' %}" alt="{{ categories.2.name }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300">
+                        {% endif %}
+                    </div>
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/75 to-transparent"></div>
+                    <div class="absolute bottom-0 left-0 right-0 p-4 md:p-6 text-white">
+                        <h3 class="text-base md:text-xl font-bold mb-1">{{ categories.2.name }}</h3>
+                        <p class="text-xs md:text-sm opacity-90">{{ categories.2.description|truncatewords:3 }}</p>
+                    </div>
+                </div>
+            </a>
+            
+            <!-- Category 4 -->
+            <a href="/menu/?category={{ categories.3.name|lower }}" class="group">
+                <div class="relative overflow-hidden rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:scale-105">
+                    <div class="h-32 sm:h-40 md:h-48 bg-gradient-to-br from-green-400 to-green-600">
+                        {% if categories.3.image %}
+                            <img src="{{ categories.3.image.url }}" alt="{{ categories.3.name }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300">
+                        {% else %}
+                            <img src="{% static 'images/default-category.jpg' %}" alt="{{ categories.3.name }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300">
+                        {% endif %}
+                    </div>
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/75 to-transparent"></div>
+                    <div class="absolute bottom-0 left-0 right-0 p-4 md:p-6 text-white">
+                        <h3 class="text-base md:text-xl font-bold mb-1">{{ categories.3.name }}</h3>
+                        <p class="text-xs md:text-sm opacity-90">{{ categories.3.description|truncatewords:3 }}</p>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Featured Items Section -->
+<section class="py-12 sm:py-16 md:py-20 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-12 md:mb-16">
+            <h2 class="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-4 md:mb-6">Featured Chillas</h2>
+            <p class="text-base sm:text-lg md:text-xl text-gray-600">Our most popular items that keep customers coming back for more</p>
+        </div>
+        
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+            {% for item in featured_items|slice:":3" %}
+            <div class="group">
+                <div class="bg-white rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden group-hover:-translate-y-2 border border-gray-100">
+                    <div class="relative overflow-hidden">
+                        <div class="h-48 sm:h-56 md:h-64">
+                            {% if item.image %}
+                                <img src="{{ item.image.url }}" alt="{{ item.name }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300">
+                            {% else %}
+                                <img src="{% static 'images/default-menu-item.jpg' %}" alt="{{ item.name }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300">
+                            {% endif %}
+                        </div>
+                        <div class="absolute top-4 left-4">
+                            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-white/95 backdrop-blur-sm text-gray-800 border border-gray-200">
+                                <i class="fas fa-fire text-orange-500 mr-1"></i> Featured
+                            </span>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex items-start justify-between mb-3">
+                            <h3 class="text-xl font-bold text-gray-900 group-hover:text-primary transition-colors duration-200">{{ item.name }}</h3>
+                            <div class="flex items-center">
+                                <span class="text-xl md:text-2xl font-bold text-primary">R{{ item.price }}</span>
+                            </div>
+                        </div>
+                        <p class="text-gray-600 text-sm mb-6 line-clamp-2">{{ item.description }}</p>
+                        <button class="w-full bg-gradient-to-r from-primary to-primary-dark hover:from-primary-dark hover:to-primary text-white font-semibold py-3 px-6 rounded-2xl transition-all duration-300 transform hover:scale-105 add-to-cart-btn"
+                                data-id="{{ item.id }}" 
+                                data-name="{{ item.name }}" 
+                                data-price="{{ item.price }}">
+                            <i class="fas fa-shopping-cart mr-2"></i>
+                            Add to Cart
+                        </button>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <div class="text-center mt-10">
+            <a href="/menu/" class="inline-flex items-center px-6 py-3 bg-primary-500 hover:bg-primary-600 text-white font-semibold rounded-2xl transition-all duration-300 transform hover:scale-105">
+                <span>View Full Menu</span>
+                <i class="fas fa-arrow-right ml-2"></i>
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="py-16 md:py-24 bg-gradient-to-br from-primary-500 to-primary-700 text-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h2 class="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-6">Ready to Chill with Great Food?</h2>
+        <p class="text-lg md:text-xl mb-10 max-w-3xl mx-auto opacity-90">Join thousands of satisfied customers who enjoy our delicious chillas with that perfect chill vibe</p>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+            <a href="/menu/" class="bg-white text-primary-600 hover:bg-gray-100 px-8 py-4 rounded-2xl font-bold text-lg transition-all duration-300 transform hover:scale-105 shadow-lg">
+                <i class="fas fa-utensils mr-2"></i>
+                Order Now
+            </a>
+            <a href="#features" class="bg-white/20 backdrop-blur-sm hover:bg-white/30 text-white px-8 py-4 rounded-2xl font-bold text-lg transition-all duration-300 border border-white/30 flex items-center justify-center">
+                <i class="fas fa-phone-alt mr-2"></i>
+                Call Us
+            </a>
+        </div>
+    </div>
+</section>
+
+<style>
+/* Improved responsive adjustments */
+@media (max-width: 640px) {
+    .hero-content {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+    
+    .feature-card {
+        padding: 1.5rem;
+    }
+    
+    .category-card {
+        height: 120px;
+    }
+}
+
+@media (max-width: 480px) {
+    .hero-title {
+        font-size: 1.875rem;
+        line-height: 1.2;
+    }
+    
+    .hero-subtitle {
+        font-size: 1.125rem;
+    }
+    
+    .btn-mobile {
+        padding: 0.75rem 1.5rem;
+        font-size: 1rem;
+    }
+}
+
+/* Ensure images maintain aspect ratio */
+img {
+    object-fit: cover;
+    width: 100%;
+    height: 100%;
+}
+
+/* Line Clamp for text truncation */
+.line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+</style>
+
+<script>
+// Add smooth scrolling for anchor links
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+            target.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            });
+        }
+    });
+});
+
+// Add to cart functionality
+document.querySelectorAll('.add-to-cart-btn').forEach(button => {
+    button.addEventListener('click', function() {
+        const id = this.dataset.id;
+        const name = this.dataset.name;
+        const price = parseFloat(this.dataset.price);
+        
+        // Add to cart logic here
+        let cart = JSON.parse(localStorage.getItem('ramza_cart') || '[]');
+        const existingItem = cart.find(item => item.id == id);
+        
+        if (existingItem) {
+            existingItem.quantity += 1;
+        } else {
+            cart.push({
+                id: id,
+                name: name,
+                price: price,
+                quantity: 1
+            });
+        }
+        
+        localStorage.setItem('ramza_cart', JSON.stringify(cart));
+        
+        // Update cart count
+        updateCartCount();
+        
+        // Show toast notification
+        showToast(`${name} added to cart!`);
+    });
+});
+
+// Update cart count
+function updateCartCount() {
+    const cart = JSON.parse(localStorage.getItem('ramza_cart') || '[]');
+    const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+    const cartCountElement = document.querySelector('.cart-count');
+    if (cartCountElement) {
+        cartCountElement.textContent = totalItems;
+        cartCountElement.style.display = totalItems > 0 ? 'flex' : 'none';
+    }
+}
+
+// Show toast notification
+function showToast(message) {
+    const toast = document.getElementById('toast');
+    const toastMessage = document.getElementById('toast-message');
+    
+    if (toast && toastMessage) {
+        toastMessage.textContent = message;
+        toast.classList.remove('translate-y-full');
+        toast.classList.add('translate-y-0');
+        
+        setTimeout(() => {
+            toast.classList.remove('translate-y-0');
+            toast.classList.add('translate-y-full');
+        }, 3000);
+    }
+}
+
+// Initialize cart count on page load
+document.addEventListener('DOMContentLoaded', function() {
+    updateCartCount();
+});
+</script>
+{% endblock %}

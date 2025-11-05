@@ -1,0 +1,156 @@
+{% extends 'custom_admin/base.html' %}
+
+{% block page_title %}Dashboard{% endblock %}
+
+{% block content %}
+<!-- Welcome Message -->
+<div class="bg-white rounded-lg shadow p-6 mb-6">
+    <div class="flex flex-col md:flex-row items-center justify-between">
+        <div>
+            <h1 class="text-2xl font-bold text-gray-800 mb-2">Welcome to Admin Dashboard</h1>
+            <p class="text-gray-600">Manage your restaurant efficiently</p>
+        </div>
+        <div class="text-4xl text-gray-200 mt-4 md:mt-0">
+            <i class="fas fa-chart-line"></i>
+        </div>
+    </div>
+</div>
+
+<!-- Statistics Cards -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+    <!-- Total Menu Items -->
+    <div class="stats-card p-6">
+        <div class="flex items-center">
+            <div class="p-3 bg-blue-100 rounded-full">
+                <i class="fas fa-utensils text-blue-600 text-xl"></i>
+            </div>
+            <div class="ml-4">
+                <p class="text-sm font-medium text-gray-600">Total Menu Items</p>
+                <p class="text-2xl font-bold text-gray-900">{{ total_items }}</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Active Categories -->
+    <div class="stats-card p-6">
+        <div class="flex items-center">
+            <div class="p-3 bg-green-100 rounded-full">
+                <i class="fas fa-tags text-green-600 text-xl"></i>
+            </div>
+            <div class="ml-4">
+                <p class="text-sm font-medium text-gray-600">Active Categories</p>
+                <p class="text-2xl font-bold text-gray-900">{{ total_categories }}</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Featured Items -->
+    <div class="stats-card p-6">
+        <div class="flex items-center">
+            <div class="p-3 bg-yellow-100 rounded-full">
+                <i class="fas fa-star text-yellow-600 text-xl"></i>
+            </div>
+            <div class="ml-4">
+                <p class="text-sm font-medium text-gray-600">Featured Items</p>
+                <p class="text-2xl font-bold text-gray-900">{{ featured_items }}</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Low Stock Items -->
+    <div class="stats-card p-6">
+        <div class="flex items-center">
+            <div class="p-3 bg-red-100 rounded-full">
+                <i class="fas fa-exclamation-triangle text-red-600 text-xl"></i>
+            </div>
+            <div class="ml-4">
+                <p class="text-sm font-medium text-gray-600">Low Stock Items</p>
+                <p class="text-2xl font-bold text-gray-900">{{ low_stock_items }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="bg-white rounded-lg shadow p-6 mb-6">
+    <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
+        <i class="fas fa-bolt text-yellow-500 mr-2"></i>
+        Quick Actions
+    </h3>
+    
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <a href="{% url 'custom_admin:add_category' %}" 
+           class="block p-4 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors text-center">
+            <i class="fas fa-tag text-2xl mb-2"></i>
+            <p class="font-semibold">Add Category</p>
+        </a>
+        
+        <a href="{% url 'custom_admin:add_menu_item' %}" 
+           class="block p-4 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors text-center">
+            <i class="fas fa-utensils text-2xl mb-2"></i>
+            <p class="font-semibold">Add Menu Item</p>
+        </a>
+        
+        <a href="{% url 'custom_admin:orders' %}" 
+           class="block p-4 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition-colors text-center">
+            <i class="fas fa-shopping-cart text-2xl mb-2"></i>
+            <p class="font-semibold">View Orders</p>
+        </a>
+        
+        <a href="{% url 'custom_admin:all_images' %}" 
+           class="block p-4 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors text-center">
+            <i class="fas fa-images text-2xl mb-2"></i>
+            <p class="font-semibold">All Images</p>
+        </a>
+    </div>
+</div>
+
+<!-- Recent Orders -->
+<div class="bg-white rounded-lg shadow p-6">
+    <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
+        <i class="fas fa-history text-orange-500 mr-2"></i>
+        Recent Orders
+    </h3>
+    
+    {% if recent_orders %}
+        <div class="space-y-4">
+            {% for order in recent_orders %}
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-gray-50 rounded-lg">
+                <div class="mb-2 sm:mb-0">
+                    <div class="flex items-center">
+                        <span class="font-semibold text-gray-900">Order #{{ order.id }}</span>
+                        <span class="ml-2 text-xs px-2 py-1 rounded-full 
+                            {% if order.status == 'pending' %}bg-yellow-100 text-yellow-800
+                            {% elif order.status == 'preparing' %}bg-blue-100 text-blue-800
+                            {% elif order.status == 'ready' %}bg-green-100 text-green-800
+                            {% elif order.status == 'delivered' %}bg-gray-100 text-gray-800
+                            {% else %}bg-red-100 text-red-800{% endif %}">
+                            {{ order.status|title }}
+                        </span>
+                    </div>
+                    <p class="text-sm text-gray-600 mt-1">{{ order.customer_name }}</p>
+                </div>
+                <div class="text-right">
+                    <p class="font-bold text-gray-900">${{ order.total_amount }}</p>
+                    <p class="text-xs text-gray-500">{{ order.created_at|date:"M d, Y" }}</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="mt-4 text-center">
+            <a href="{% url 'custom_admin:orders' %}" 
+               class="inline-block bg-orange-500 text-white px-4 py-2 rounded-lg font-semibold hover:bg-orange-600 transition-colors">
+                View All Orders
+            </a>
+        </div>
+    {% else %}
+        <div class="text-center py-8">
+            <div class="text-gray-400 mb-4">
+                <i class="fas fa-shopping-cart text-3xl"></i>
+            </div>
+            <h4 class="text-lg font-semibold text-gray-600 mb-2">No Recent Orders</h4>
+            <p class="text-gray-500">Orders will appear here when customers place them</p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

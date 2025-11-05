@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Order Tracking Debug</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50">
+    <div class="max-w-4xl mx-auto px-4 py-12">
+        <h1 class="text-3xl font-bold text-gray-900 mb-6">Order Tracking Debug</h1>
+        
+        <div class="bg-white rounded-3xl shadow-lg p-6 mb-6">
+            <h2 class="text-xl font-semibold mb-4">Fetch Orders Test</h2>
+            <button id="fetchBtn" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                Fetch Orders
+            </button>
+            <button id="clearBtn" class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded ml-2">
+                Clear
+            </button>
+        </div>
+        
+        <div id="results" class="space-y-4"></div>
+    </div>
+
+    <script>
+        document.getElementById('fetchBtn').addEventListener('click', async () => {
+            try {
+                console.log('Fetching orders...');
+                const response = await fetch('/api/v1/orders/');
+                console.log('Response status:', response.status);
+                const data = await response.json();
+                console.log('Data received:', data);
+                
+                const resultsDiv = document.getElementById('results');
+                resultsDiv.innerHTML = `
+                    <div class="bg-white rounded-3xl shadow-lg p-6">
+                        <h3 class="text-lg font-semibold mb-2">API Response</h3>
+                        <pre class="bg-gray-100 p-4 rounded overflow-x-auto">${JSON.stringify(data, null, 2)}</pre>
+                    </div>
+                `;
+                
+                if (data.success && data.orders && data.orders.length > 0) {
+                    renderOrders(data.orders);
+                }
+            } catch (error) {
+                console.error('Error fetching orders:', error);
+                document.getElementById('results').innerHTML = `
+                    <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+                        <strong>Error:</strong> ${error.message}
+                    </div>
+                `;
+            }
+        });
+        
+        document.getElementById('clearBtn').addEventListener('click', () => {
+            document.getElementById('results').innerHTML = '';
+        });
+        
+        function renderOrders(orders) {
+            console.log('Rendering orders:', orders);
+            const resultsDiv = document.getElementById('results');
+            
+            const ordersHtml = orders.map(order => {
+                try {
+                    // Test date formatting
+                    const date = new Date(order.created_at);
+                    const formattedDate = isNaN(date.getTime()) ? 'Invalid Date' : date.toLocaleDateString();
+                    const formattedTime = isNaN(date.getTime()) ? '' : date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                    
+                    return `
+                        <div class="bg-white rounded-3xl shadow-lg p-6">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <h3 class="text-lg font-bold text-gray-900">Order #${order.order_number}</h3>
+                                    <p class="text-sm text-gray-600">${order.customer_name} • ${order.customer_phone}</p>
+                                    <p class="text-xs text-gray-500">Placed on ${formattedDate} at ${formattedTime}</p>
+                                </div>
+                                <span class="px-3 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-800">
+                                    ${order.status_display}
+                                </span>
+                            </div>
+                            <div class="mt-4">
+                                <p class="font-bold text-gray-900">R${parseFloat(order.total).toFixed(2)}</p>
+                            </div>
+                        </div>
+                    `;
+                } catch (e) {
+                    console.error('Error rendering order:', order, e);
+                    return `
+                        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+                            <strong>Error rendering order ${order.order_number}:</strong> ${e.message}
+                        </div>
+                    `;
+                }
+            }).join('');
+            
+            resultsDiv.innerHTML += `
+                <div class="bg-white rounded-3xl shadow-lg p-6">
+                    <h3 class="text-lg font-semibold mb-4">Rendered Orders (${orders.length})</h3>
+                    <div class="space-y-4">${ordersHtml}</div>
+                </div>
+            `;
+        }
+    </script>
+</body>
+</html>

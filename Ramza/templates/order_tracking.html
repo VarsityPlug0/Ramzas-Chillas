@@ -1,0 +1,363 @@
+{% extends 'base.html' %}
+
+{% block title %}Track Order - {{ site_settings.site_name }}{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+  <!-- Debug Info (Hidden by default, but can be shown for troubleshooting) -->
+  <div id="debug-info" class="hidden bg-blue-50 border border-blue-200 rounded-2xl p-4 mb-4 text-sm">
+    <h3 class="font-semibold text-blue-800 mb-2">Debug Information</h3>
+    <p id="debug-content" class="text-blue-600"></p>
+  </div>
+
+  <!-- Header -->
+  <div class="text-center mb-10">
+    <h1 class="text-3xl md:text-4xl font-bold text-gray-900 mb-3">Track Your Order</h1>
+    <p class="text-gray-600">Enter your order ID to check the status</p>
+  </div>
+
+  <!-- Order Tracking Form -->
+  <div class="bg-white rounded-3xl shadow-lg p-6 md:p-8 mb-8">
+    <form id="track-order-form" class="max-w-md mx-auto">
+      <div class="mb-6">
+        <label for="order-id" class="block text-sm font-semibold text-gray-700 mb-2">Order ID</label>
+        <input 
+          type="text" 
+          id="order-id" 
+          name="order_id" 
+          required 
+          class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent" 
+          placeholder="Enter your order ID (e.g., ORD-ABC123)"
+        >
+      </div>
+      <button 
+        type="submit" 
+        class="w-full bg-gradient-to-r from-primary to-primary-dark text-white font-bold py-3 px-4 rounded-2xl hover:from-primary-dark hover:to-primary transition-all duration-300 transform hover:scale-105"
+      >
+        <i class="fas fa-search mr-2"></i>Track Order
+      </button>
+    </form>
+  </div>
+
+  <!-- Order Status Section (Hidden by default) -->
+  <div id="order-status-section" class="hidden">
+    <div class="bg-white rounded-3xl shadow-lg p-6 md:p-8 mb-8">
+      <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+        <div>
+          <h2 class="text-xl font-bold text-gray-900">Order Status</h2>
+          <p id="order-date" class="text-gray-600">Placed on </p>
+        </div>
+        <span id="order-status-badge" class="px-4 py-2 rounded-full text-sm font-semibold bg-gray-100 text-gray-800">
+          Pending
+        </span>
+      </div>
+
+      <!-- Progress Steps -->
+      <div class="mb-8">
+        <h3 class="text-lg font-semibold text-gray-900 mb-4">Order Progress</h3>
+        <div id="progress-steps" class="flex flex-col space-y-4">
+          <!-- Progress steps will be inserted here by JavaScript -->
+        </div>
+      </div>
+
+      <!-- Order Details -->
+      <div>
+        <h3 class="text-lg font-semibold text-gray-900 mb-4">Order Details</h3>
+        <div class="space-y-4">
+          <div class="flex justify-between">
+            <span class="text-gray-600">Customer</span>
+            <span id="customer-name" class="font-medium"></span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-gray-600">Order Type</span>
+            <span id="order-type" class="font-medium capitalize"></span>
+          </div>
+          <div id="delivery-address-container" class="flex justify-between hidden">
+            <span class="text-gray-600">Delivery Address</span>
+            <span id="delivery-address" class="font-medium text-right"></span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-gray-600">Phone</span>
+            <span id="customer-phone" class="font-medium"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Order Items -->
+    <div class="bg-white rounded-3xl shadow-lg p-6 md:p-8 mb-8">
+      <h3 class="text-xl font-bold text-gray-900 mb-6">Order Items</h3>
+      <div id="order-items" class="space-y-4">
+        <!-- Order items will be inserted here by JavaScript -->
+      </div>
+      
+      <div class="mt-6 pt-4 border-t border-gray-200">
+        <div class="flex justify-between mb-2">
+          <span class="text-gray-600">Subtotal</span>
+          <span id="subtotal" class="font-medium">R0.00</span>
+        </div>
+        <div class="flex justify-between mb-2">
+          <span class="text-gray-600">Delivery Fee</span>
+          <span id="delivery-fee" class="font-medium">R0.00</span>
+        </div>
+        <div class="flex justify-between text-lg font-bold mt-2">
+          <span>Total</span>
+          <span id="total">R0.00</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Refresh Button -->
+    <div class="text-center">
+      <button 
+        id="refresh-status-btn"
+        class="bg-primary text-white px-6 py-3 rounded-2xl font-semibold hover:bg-primary-dark transition-colors flex items-center mx-auto"
+      >
+        <i class="fas fa-sync-alt mr-2"></i>
+        Refresh Status
+      </button>
+    </div>
+  </div>
+
+  <!-- Error Message (Hidden by default) -->
+  <div id="error-message" class="hidden bg-red-50 border border-red-200 rounded-2xl p-6 text-center">
+    <div class="text-red-500 mb-2">
+      <i class="fas fa-exclamation-circle text-2xl"></i>
+    </div>
+    <h3 class="text-lg font-semibold text-red-800 mb-1">Error</h3>
+    <p id="error-text" class="text-red-600"></p>
+    <div class="mt-4">
+      <button 
+        id="try-again-btn"
+        class="bg-red-500 text-white px-4 py-2 rounded-lg font-semibold hover:bg-red-600 transition-colors"
+      >
+        Try Again
+      </button>
+    </div>
+  </div>
+
+  <!-- Loading Indicator (Hidden by default) -->
+  <div id="loading-indicator" class="hidden text-center py-8">
+    <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
+    <p class="mt-4 text-gray-600">Loading order details...</p>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Debug logging
+  console.log('Order tracking page loaded');
+  
+  const trackForm = document.getElementById('track-order-form');
+  const orderIdInput = document.getElementById('order-id');
+  const orderStatusSection = document.getElementById('order-status-section');
+  const errorMessage = document.getElementById('error-message');
+  const errorText = document.getElementById('error-text');
+  const loadingIndicator = document.getElementById('loading-indicator');
+  const refreshBtn = document.getElementById('refresh-status-btn');
+  const tryAgainBtn = document.getElementById('try-again-btn');
+  const debugInfo = document.getElementById('debug-info');
+  const debugContent = document.getElementById('debug-content');
+
+  // Show debug info in development
+  if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+    debugInfo.classList.remove('hidden');
+    debugContent.textContent = 'Page loaded successfully. Waiting for order tracking...';
+  }
+
+  // Check if there's an order ID in the URL
+  const urlParams = new URLSearchParams(window.location.search);
+  const orderIdFromUrl = urlParams.get('order_id');
+  if (orderIdFromUrl) {
+    orderIdInput.value = orderIdFromUrl;
+    debugContent.textContent = 'Tracking order from URL: ' + orderIdFromUrl;
+    trackOrder(orderIdFromUrl);
+  }
+
+  trackForm.addEventListener('submit', function(e) {
+    e.preventDefault();
+    const orderId = orderIdInput.value.trim();
+    if (orderId) {
+      debugContent.textContent = 'Tracking order: ' + orderId;
+      trackOrder(orderId);
+    }
+  });
+
+  refreshBtn.addEventListener('click', function() {
+    const orderId = orderIdInput.value.trim();
+    if (orderId) {
+      debugContent.textContent = 'Refreshing order: ' + orderId;
+      trackOrder(orderId);
+    }
+  });
+
+  tryAgainBtn.addEventListener('click', function() {
+    const orderId = orderIdInput.value.trim();
+    if (orderId) {
+      debugContent.textContent = 'Trying again to track order: ' + orderId;
+      trackOrder(orderId);
+    }
+  });
+
+  function trackOrder(orderId) {
+    // Show loading, hide other sections
+    loadingIndicator.classList.remove('hidden');
+    orderStatusSection.classList.add('hidden');
+    errorMessage.classList.add('hidden');
+
+    // Use full URL to ensure correct endpoint
+    const apiUrl = `/api/v1/orders/${orderId}/status/`;
+    debugContent.textContent = 'Fetching from API: ' + apiUrl;
+    
+    fetch(apiUrl)
+      .then(response => {
+        debugContent.textContent = 'API response status: ' + response.status;
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then(data => {
+        debugContent.textContent = 'API response received: ' + (data ? JSON.stringify(data).substring(0, 100) + '...' : 'No data');
+        loadingIndicator.classList.add('hidden');
+        
+        if (data && data.success) {
+          displayOrderStatus(data.order);
+        } else {
+          showError(data && data.error ? data.error : 'Failed to fetch order status');
+        }
+      })
+      .catch(error => {
+        loadingIndicator.classList.add('hidden');
+        console.error('Error tracking order:', error);
+        debugContent.textContent = 'Error occurred: ' + error.message;
+        showError('Failed to fetch order status. Please check your connection and try again. Error: ' + error.message);
+      });
+  }
+
+  function displayOrderStatus(order) {
+    try {
+      if (!order) {
+        showError('No order data received');
+        return;
+      }
+      
+      debugContent.textContent = 'Displaying order status for: ' + (order.order_number || 'Unknown order');
+      
+      // Update order details
+      const orderDate = order.created_at ? new Date(order.created_at).toLocaleDateString() : 'Unknown date';
+      document.getElementById('order-date').textContent = `Placed on ${orderDate}`;
+      document.getElementById('order-status-badge').textContent = order.status_display || 'Unknown';
+      document.getElementById('order-status-badge').className = `px-4 py-2 rounded-full text-sm font-semibold ${getStatusColor(order.status || 'pending')}`;
+      
+      document.getElementById('customer-name').textContent = order.customer_name || 'N/A';
+      document.getElementById('order-type').textContent = order.order_type || 'N/A';
+      document.getElementById('customer-phone').textContent = order.customer_phone || 'N/A';
+      
+      if (order.delivery_address) {
+        document.getElementById('delivery-address').textContent = order.delivery_address;
+        document.getElementById('delivery-address-container').classList.remove('hidden');
+      } else {
+        document.getElementById('delivery-address-container').classList.add('hidden');
+      }
+      
+      document.getElementById('subtotal').textContent = `R${(order.subtotal !== undefined ? order.subtotal : 0).toFixed(2)}`;
+      document.getElementById('delivery-fee').textContent = `R${(order.delivery_fee !== undefined ? order.delivery_fee : 0).toFixed(2)}`;
+      document.getElementById('total').textContent = `R${(order.total !== undefined ? order.total : 0).toFixed(2)}`;
+      
+      // Update progress steps
+      const progressStepsContainer = document.getElementById('progress-steps');
+      const statusSteps = getStatusSteps(order.status || 'pending');
+      progressStepsContainer.innerHTML = '';
+      
+      statusSteps.forEach((step, index) => {
+        const stepElement = document.createElement('div');
+        stepElement.className = 'flex items-center';
+        stepElement.innerHTML = `
+          <div class="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${
+            step.completed ? 'bg-green-500 text-white' : 'bg-gray-200 text-gray-500'
+          }">
+            ${step.completed ? '<i class="fas fa-check"></i>' : `<span class="text-sm font-medium">${index + 1}</span>`}
+          </div>
+          <div class="ml-4 flex-1">
+            <p class="text-sm font-medium ${step.completed ? 'text-gray-900' : 'text-gray-500'}">
+              ${step.label}
+            </p>
+          </div>
+        `;
+        progressStepsContainer.appendChild(stepElement);
+      });
+      
+      // Update order items
+      const orderItemsContainer = document.getElementById('order-items');
+      orderItemsContainer.innerHTML = '';
+      
+      if (order.items && Array.isArray(order.items) && order.items.length > 0) {
+        order.items.forEach(item => {
+          const itemElement = document.createElement('div');
+          itemElement.className = 'flex items-center justify-between py-3 border-b border-gray-100';
+          itemElement.innerHTML = `
+            <div class="flex items-center">
+              <div class="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center mr-4">
+                <i class="fas fa-utensils text-gray-400"></i>
+              </div>
+              <div>
+                <h4 class="font-medium text-gray-900">${item.name || 'Unknown Item'}</h4>
+                <p class="text-sm text-gray-600">Qty: ${item.quantity || 0}</p>
+              </div>
+            </div>
+            <div class="font-semibold">R${(item.total !== undefined ? item.total : 0).toFixed(2)}</div>
+          `;
+          orderItemsContainer.appendChild(itemElement);
+        });
+      } else {
+        orderItemsContainer.innerHTML = '<p class="text-gray-500 text-center py-4">No items found for this order</p>';
+      }
+      
+      // Show order status section
+      orderStatusSection.classList.remove('hidden');
+      errorMessage.classList.add('hidden');
+      debugContent.textContent = 'Order status displayed successfully';
+    } catch (error) {
+      console.error('Error displaying order status:', error);
+      debugContent.textContent = 'Error displaying order: ' + error.message;
+      showError('Error displaying order information. Please try again.');
+    }
+  }
+
+  function showError(message) {
+    errorText.textContent = message;
+    errorMessage.classList.remove('hidden');
+    orderStatusSection.classList.add('hidden');
+    loadingIndicator.classList.add('hidden');
+    debugContent.textContent = 'Error shown to user: ' + message;
+  }
+
+  function getStatusColor(status) {
+    const colors = {
+      'pending': 'bg-yellow-100 text-yellow-800',
+      'confirmed': 'bg-blue-100 text-blue-800',
+      'preparing': 'bg-blue-100 text-blue-800',
+      'ready': 'bg-green-100 text-green-800',
+      'out_for_delivery': 'bg-purple-100 text-purple-800',
+      'delivered': 'bg-gray-100 text-gray-800',
+      'completed': 'bg-gray-100 text-gray-800',
+      'cancelled': 'bg-red-100 text-red-800'
+    };
+    return colors[status] || 'bg-gray-100 text-gray-800';
+  }
+
+  function getStatusSteps(currentStatus) {
+    const steps = [
+      { id: 'pending', label: 'Order Placed', completed: true },
+      { id: 'confirmed', label: 'Confirmed', completed: ['confirmed', 'preparing', 'ready', 'out_for_delivery', 'delivered', 'completed'].includes(currentStatus) },
+      { id: 'preparing', label: 'Preparing', completed: ['preparing', 'ready', 'out_for_delivery', 'delivered', 'completed'].includes(currentStatus) },
+      { id: 'ready', label: 'Ready', completed: ['ready', 'out_for_delivery', 'delivered', 'completed'].includes(currentStatus) },
+      { id: 'out_for_delivery', label: 'Out for Delivery', completed: ['out_for_delivery', 'delivered', 'completed'].includes(currentStatus) },
+      { id: 'delivered', label: 'Delivered', completed: ['delivered', 'completed'].includes(currentStatus) }
+    ];
+    return steps;
+  }
+});
+</script>
+{% endblock %}

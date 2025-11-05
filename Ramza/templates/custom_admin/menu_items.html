@@ -1,0 +1,180 @@
+{% extends 'custom_admin/base.html' %}
+
+{% block page_title %}Menu Items{% endblock %}
+
+{% block content %}
+<!-- Header with Add Button -->
+<div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+    <div>
+        <h1 class="text-2xl md:text-3xl font-bold text-gray-900">Menu Items</h1>
+        <p class="text-gray-600 mt-1">Manage your restaurant's menu items</p>
+    </div>
+    <a href="{% url 'custom_admin:add_menu_item' %}" 
+       class="gradient-bg text-white px-4 py-2 md:px-6 md:py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity text-sm md:text-base">
+        <i class="fas fa-plus mr-1 md:mr-2"></i>Add New Item
+    </a>
+</div>
+
+<!-- Search and Filter -->
+<div class="stats-card p-4 md:p-6 mb-6">
+    <form method="get" class="flex flex-col sm:flex-row gap-3 md:gap-4">
+        <div class="flex-1">
+            <input type="text" 
+                   name="search" 
+                   value="{{ search_query }}" 
+                   placeholder="Search menu items..." 
+                   class="w-full px-3 py-2 md:px-4 md:py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-sm md:text-base">
+        </div>
+        <div class="w-full sm:w-40 md:w-48">
+            <select name="category" 
+                    class="w-full px-3 py-2 md:px-4 md:py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-sm md:text-base">
+                <option value="">All Categories</option>
+                {% for category in categories %}
+                    <option value="{{ category.id }}" {% if category_filter == category.id|stringformat:"s" %}selected{% endif %}>
+                        {{ category.name }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="flex gap-2">
+            <button type="submit" 
+                    class="gradient-bg text-white px-4 py-2 rounded-lg font-semibold hover:opacity-90 transition-opacity text-sm">
+                <i class="fas fa-search mr-1"></i>Search
+            </button>
+            {% if search_query or category_filter %}
+            <a href="{% url 'custom_admin:menu_items' %}" 
+               class="bg-gray-500 text-white px-4 py-2 rounded-lg font-semibold hover:bg-gray-600 transition-colors text-sm">
+                <i class="fas fa-times mr-1"></i>Clear
+            </a>
+            {% endif %}
+        </div>
+    </form>
+</div>
+
+<!-- Menu Items Grid -->
+{% if page_obj %}
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 mb-6">
+    {% for item in page_obj %}
+    <div class="stats-card p-0 overflow-hidden">
+        <!-- Image -->
+        <div class="h-32 md:h-48 bg-gray-200 relative overflow-hidden">
+            {% if item.image %}
+                <img src="{{ item.image.url }}" alt="{{ item.name }}" class="w-full h-full object-cover">
+            {% else %}
+                <div class="w-full h-full flex items-center justify-center bg-gray-100">
+                    <div class="text-center text-gray-400 p-2">
+                        <i class="fas fa-image text-2xl md:text-4xl mb-1"></i>
+                        <p class="text-xs md:text-sm">No Image</p>
+                    </div>
+                </div>
+            {% endif %}
+            
+            <!-- Status Badges -->
+            <div class="absolute top-1 right-1 md:top-2 md:right-2 space-y-1">
+                {% if item.is_featured %}
+                <span class="inline-block px-1.5 py-0.5 md:px-2 md:py-1 bg-yellow-500 text-white text-xs font-semibold rounded-full">
+                    <i class="fas fa-star mr-0.5 md:mr-1"></i><span class="hidden sm:inline">Featured</span>
+                </span>
+                {% endif %}
+                
+                {% if not item.is_available %}
+                <span class="inline-block px-1.5 py-0.5 md:px-2 md:py-1 bg-red-500 text-white text-xs font-semibold rounded-full">
+                    <i class="fas fa-times mr-0.5 md:mr-1"></i><span class="hidden sm:inline">Unavailable</span>
+                </span>
+                {% endif %}
+            </div>
+            
+            <!-- Stock Status -->
+            <div class="absolute bottom-1 left-1 md:bottom-2 md:left-2">
+                {% if item.stock_quantity <= 0 %}
+                <span class="inline-block px-1.5 py-0.5 md:px-2 md:py-1 bg-red-600 text-white text-xs font-semibold rounded-full">
+                    <i class="fas fa-times-circle mr-0.5 md:mr-1"></i><span class="hidden sm:inline">Out of Stock</span>
+                </span>
+                {% elif item.stock_quantity <= 5 %}
+                <span class="inline-block px-1.5 py-0.5 md:px-2 md:py-1 bg-orange-500 text-white text-xs font-semibold rounded-full">
+                    <i class="fas fa-exclamation-circle mr-0.5 md:mr-1"></i><span class="hidden sm:inline">Low Stock</span>
+                </span>
+                {% else %}
+                <span class="inline-block px-1.5 py-0.5 md:px-2 md:py-1 bg-green-500 text-white text-xs font-semibold rounded-full">
+                    <i class="fas fa-check-circle mr-0.5 md:mr-1"></i><span class="hidden sm:inline">In Stock</span>
+                </span>
+                {% endif %}
+            </div>
+        </div>
+        
+        <!-- Content -->
+        <div class="p-3 md:p-4">
+            <div class="flex justify-between items-start mb-2">
+                <h3 class="text-base md:text-lg font-semibold text-gray-900 truncate">{{ item.name }}</h3>
+                <span class="text-base md:text-lg font-bold text-orange-600">${{ item.price }}</span>
+            </div>
+            
+            <p class="text-xs md:text-sm text-gray-600 mb-2 md:mb-3 line-clamp-2">{{ item.description|truncatewords:10 }}</p>
+            
+            <div class="flex items-center justify-between text-xs md:text-sm text-gray-500 mb-3 md:mb-4">
+                <span class="bg-gray-100 px-1.5 py-0.5 md:px-2 md:py-1 rounded">{{ item.category.name }}</span>
+                <span>Updated {{ item.updated_at|timesince }} ago</span>
+            </div>
+            
+            <!-- Actions -->
+            <div class="flex space-x-2">
+                <a href="{% url 'custom_admin:edit_menu_item' item.id %}" 
+                   class="flex-1 bg-blue-500 text-white text-center py-1.5 md:py-2 px-2 md:px-3 rounded-lg text-xs md:text-sm font-semibold hover:bg-blue-600 transition-colors">
+                    <i class="fas fa-edit mr-1"></i><span class="hidden sm:inline">Edit</span>
+                </a>
+                <a href="{% url 'custom_admin:delete_menu_item' item.id %}" 
+                   onclick="return confirm('Are you sure you want to delete this item?')"
+                   class="bg-red-500 text-white py-1.5 md:py-2 px-2 md:px-3 rounded-lg text-xs md:text-sm font-semibold hover:bg-red-600 transition-colors">
+                    <i class="fas fa-trash"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Pagination -->
+{% if page_obj.has_other_pages %}
+<div class="flex flex-wrap justify-center items-center gap-2 mb-6">
+    {% if page_obj.has_previous %}
+        <a href="?page={{ page_obj.previous_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if category_filter %}&category={{ category_filter }}{% endif %}" 
+           class="px-3 py-1.5 md:px-4 md:py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-sm">
+            <i class="fas fa-chevron-left mr-1"></i>Previous
+        </a>
+    {% endif %}
+    
+    <span class="px-3 py-1.5 md:px-4 md:py-2 bg-orange-500 text-white rounded-lg text-sm">
+        Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+    </span>
+    
+    {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if category_filter %}&category={{ category_filter }}{% endif %}" 
+           class="px-3 py-1.5 md:px-4 md:py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-sm">
+            Next<i class="fas fa-chevron-right ml-1"></i>
+        </a>
+    {% endif %}
+</div>
+{% endif %}
+
+{% else %}
+<div class="stats-card p-8 md:p-12 text-center">
+    <div class="text-gray-400 mb-4 md:mb-6">
+        <i class="fas fa-utensils text-4xl md:text-6xl"></i>
+    </div>
+    <h3 class="text-lg md:text-xl font-semibold text-gray-900 mb-1 md:mb-2">No Menu Items Found</h3>
+    {% if search_query or category_filter %}
+        <p class="text-gray-600 mb-4 md:mb-6">Try adjusting your search criteria</p>
+        <a href="{% url 'custom_admin:menu_items' %}" 
+           class="gradient-bg text-white px-4 py-2 md:px-6 md:py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity text-sm md:text-base">
+            <i class="fas fa-times mr-1 md:mr-2"></i>Clear Filters
+        </a>
+    {% else %}
+        <p class="text-gray-600 mb-4 md:mb-6">Start building your menu by adding your first item</p>
+        <a href="{% url 'custom_admin:add_menu_item' %}" 
+           class="gradient-bg text-white px-4 py-2 md:px-6 md:py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity text-sm md:text-base">
+            <i class="fas fa-plus mr-1 md:mr-2"></i>Add First Menu Item
+        </a>
+    {% endif %}
+</div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,483 @@
+{% extends 'base.html' %}
+
+{% block title %}Shopping Cart - Ramza's Chillas{% endblock %}
+
+{% block content %}
+<!-- Cart Header -->
+<div class="relative bg-gradient-to-br from-gray-50 to-gray-100 border-b border-gray-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div class="text-center">
+            <div class="inline-flex items-center px-4 py-2 bg-primary/10 rounded-full text-primary text-sm font-medium mb-4">
+                <i class="fas fa-shopping-cart mr-2"></i>
+                Your Order
+            </div>
+            <h1 class="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+                Shopping <span class="text-gradient bg-gradient-to-r from-primary to-primary-dark bg-clip-text text-transparent">Cart</span>
+            </h1>
+            <p class="text-base sm:text-lg text-gray-600 max-w-2xl mx-auto">
+                Review your delicious selection before checkout
+            </p>
+        </div>
+    </div>
+</div>
+
+<!-- Cart Content -->
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-16">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8">
+        <!-- Cart Items -->
+        <div class="lg:col-span-2">
+            <!-- Cart Items List -->
+            <div id="cart-items" class="space-y-4 md:space-y-6">
+                <!-- Dynamic cart items will be inserted here -->
+            </div>
+            
+            <!-- Empty Cart State -->
+            <div id="empty-cart" class="bg-white rounded-3xl shadow-lg p-8 md:p-12 text-center">
+                <div class="w-24 h-24 md:w-32 md:h-32 mx-auto bg-gradient-to-br from-gray-100 to-gray-200 rounded-full flex items-center justify-center mb-6">
+                    <i class="fas fa-shopping-cart text-3xl md:text-4xl text-gray-400"></i>
+                </div>
+                <h3 class="text-xl md:text-2xl font-bold text-gray-900 mb-4">Your cart is chillin'</h3>
+                <p class="text-gray-600 mb-6 md:mb-8 max-w-md mx-auto">
+                    Looks like you haven't added any delicious items yet. Browse our menu and add some fire chillas!
+                </p>
+                <a href="/menu/" class="inline-flex items-center px-6 py-3 md:px-8 md:py-4 bg-gradient-to-r from-primary to-primary-dark text-white font-semibold rounded-2xl hover:from-primary-dark hover:to-primary transition-all duration-300 transform hover:scale-105 hover:shadow-xl">
+                    <i class="fas fa-utensils mr-2 md:mr-3"></i>
+                    Browse Menu
+                </a>
+            </div>
+        </div>
+        
+        <!-- Order Summary -->
+        <div class="lg:col-span-1">
+            <div class="bg-white rounded-3xl shadow-lg p-6 md:p-8 sticky top-8">
+                <h3 class="text-lg md:text-xl font-bold text-gray-900 mb-4 md:mb-6">Order Summary</h3>
+                
+                <!-- Summary Items -->
+                <div class="space-y-3 md:space-y-4 mb-4 md:mb-6">
+                    <div class="flex justify-between text-gray-600">
+                        <span>Subtotal</span>
+                        <span id="subtotal">R0.00</span>
+                    </div>
+                    <div class="flex justify-between text-gray-600">
+                        <span>Delivery Fee</span>
+                        <span id="delivery-fee">R3.99</span>
+                    </div>
+                    <div class="flex justify-between text-gray-600">
+                        <span>Tax (8.25%)</span>
+                        <span id="tax">R0.00</span>
+                    </div>
+                    <div class="border-t border-gray-200 pt-3 md:pt-4">
+                        <div class="flex justify-between text-lg md:text-xl font-bold text-gray-900">
+                            <span>Total</span>
+                            <span id="total">R0.00</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Promo Code -->
+                <div class="mb-4 md:mb-6">
+                    <div class="flex space-x-2">
+                        <input type="text" id="promo-code" placeholder="Enter promo code" 
+                               class="flex-1 px-3 py-2 md:px-4 md:py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent text-sm md:text-base">
+                        <button id="apply-promo" class="px-4 py-2 md:px-6 md:py-3 bg-gray-100 text-gray-700 rounded-xl hover:bg-gray-200 transition-colors duration-200">
+                            <i class="fas fa-tag"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Checkout Button -->
+                <button id="checkout-btn" class="w-full bg-gradient-to-r from-primary to-primary-dark text-white font-bold py-3 md:py-4 rounded-2xl hover:from-primary-dark hover:to-primary transition-all duration-300 transform hover:scale-105 hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none text-sm md:text-base">
+                    <i class="fas fa-credit-card mr-2 md:mr-3"></i>
+                    Proceed to Checkout
+                </button>
+                
+                <!-- Continue Shopping -->
+                <div class="text-center mt-4 md:mt-6">
+                    <a href="/menu/" class="inline-flex items-center text-primary hover:text-primary-dark font-semibold transition-colors duration-200 text-sm">
+                        <i class="fas fa-arrow-left mr-1 md:mr-2"></i>
+                        Continue Shopping
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Cart Item Template -->
+<template id="cart-item-template">
+    <div class="cart-item bg-white rounded-2xl shadow-lg p-4 md:p-6 transition-all duration-300 hover:shadow-xl">
+        <div class="flex items-center space-x-4 md:space-x-6">
+            <!-- Item Image -->
+            <div class="flex-shrink-0">
+                <div class="w-16 h-16 md:w-20 md:h-20 bg-gradient-to-br from-orange-100 to-orange-200 rounded-xl flex items-center justify-center">
+                    <i class="item-icon text-xl md:text-2xl text-orange-400"></i>
+                </div>
+            </div>
+            
+            <!-- Item Details -->
+            <div class="flex-1 min-w-0">
+                <h4 class="item-name text-base md:text-lg font-semibold text-gray-900 mb-1"></h4>
+                <p class="item-category text-xs md:text-sm text-gray-500 mb-2"></p>
+                <div class="flex items-center space-x-3 md:space-x-4">
+                    <span class="item-price text-base md:text-lg font-bold text-primary">R</span>
+                    <div class="flex items-center space-x-2 md:space-x-3">
+                        <button class="quantity-btn decrease w-6 h-6 md:w-8 md:h-8 bg-gray-100 hover:bg-gray-200 rounded-full flex items-center justify-center transition-colors duration-200">
+                            <i class="fas fa-minus text-xs"></i>
+                        </button>
+                        <span class="item-quantity text-base md:text-lg font-semibold min-w-[1.5rem] md:min-w-[2rem] text-center"></span>
+                        <button class="quantity-btn increase w-6 h-6 md:w-8 md:h-8 bg-gray-100 hover:bg-gray-200 rounded-full flex items-center justify-center transition-colors duration-200">
+                            <i class="fas fa-plus text-xs"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Remove Button -->
+            <div class="flex-shrink-0">
+                <button class="remove-item w-8 h-8 md:w-10 md:h-10 bg-red-50 hover:bg-red-100 text-red-500 rounded-full flex items-center justify-center transition-all duration-200 hover:scale-110">
+                    <i class="fas fa-trash text-xs md:text-sm"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+</template>
+
+<!-- Toast Notification -->
+<div id="toast" class="fixed bottom-4 right-4 transform translate-y-full transition-transform duration-300 z-50">
+    <div class="bg-red-500 text-white px-4 py-2 md:px-6 md:py-3 rounded-2xl shadow-lg flex items-center text-sm md:text-base">
+        <i class="fas fa-trash mr-2 md:mr-3"></i>
+        <span id="toast-message">Item removed from cart!</span>
+    </div>
+</div>
+
+<style>
+/* Cart item animations */
+.cart-item {
+    animation: slideIn 0.3s ease-out;
+}
+
+.cart-item.removing {
+    animation: slideOut 0.3s ease-in;
+    transform: translateX(100%);
+    opacity: 0;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideOut {
+    from {
+        opacity: 1;
+        transform: translateX(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateX(100%);
+    }
+}
+
+/* Quantity button animations */
+.quantity-btn:active {
+    transform: scale(0.95);
+}
+
+/* Loading state */
+.loading {
+    position: relative;
+    overflow: hidden;
+}
+
+.loading::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+    animation: loading 1.5s infinite;
+}
+
+@keyframes loading {
+    0% { left: -100%; }
+    100% { left: 100%; }
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+    .cart-item {
+        padding: 1rem;
+    }
+    
+    .item-name {
+        font-size: 0.875rem;
+    }
+    
+    .item-category {
+        font-size: 0.75rem;
+    }
+    
+    .item-price {
+        font-size: 0.875rem;
+    }
+    
+    .item-quantity {
+        font-size: 0.875rem;
+    }
+    
+    .quantity-btn {
+        width: 1.5rem;
+        height: 1.5rem;
+    }
+    
+    .remove-item {
+        width: 1.75rem;
+        height: 1.75rem;
+    }
+}
+</style>
+
+<script>
+// Cart Management
+class ShoppingCart {
+    constructor() {
+        this.items = this.loadCart();
+        this.init();
+    }
+    
+    init() {
+        this.renderCart();
+        this.bindEvents();
+        this.updateSummary();
+    }
+    
+    loadCart() {
+        const saved = localStorage.getItem('ramza_cart');
+        return saved ? JSON.parse(saved) : [];
+    }
+    
+    saveCart() {
+        localStorage.setItem('ramza_cart', JSON.stringify(this.items));
+        // Dispatch event to notify other parts of the app
+        window.dispatchEvent(new CustomEvent('cartUpdated', { detail: this.items }));
+    }
+    
+    addItem(item) {
+        // Ensure item has all required properties
+        const cartItem = {
+            id: item.id,
+            name: item.name,
+            price: parseFloat(item.price),
+            category: item.category || 'Menu Item',
+            quantity: parseInt(item.quantity || 1)
+        };
+        
+        const existingItem = this.items.find(i => i.id === cartItem.id);
+        if (existingItem) {
+            existingItem.quantity += cartItem.quantity;
+        } else {
+            this.items.push(cartItem);
+        }
+        this.saveCart();
+        this.renderCart();
+        this.updateSummary();
+        this.showToast(`${cartItem.name} added to cart!`);
+    }
+    
+    removeItem(itemId) {
+        const itemElement = document.querySelector(`[data-item-id="${itemId}"]`);
+        if (itemElement) {
+            itemElement.classList.add('removing');
+            setTimeout(() => {
+                this.items = this.items.filter(item => item.id !== itemId);
+                this.saveCart();
+                this.renderCart();
+                this.updateSummary();
+                this.showToast('Item removed from cart!');
+            }, 300);
+        }
+    }
+    
+    updateQuantity(itemId, quantity) {
+        const item = this.items.find(i => i.id === itemId);
+        if (item) {
+            const newQuantity = parseInt(quantity);
+            if (newQuantity <= 0) {
+                this.removeItem(itemId);
+            } else {
+                item.quantity = newQuantity;
+                this.saveCart();
+                this.renderCart();
+                this.updateSummary();
+            }
+        }
+    }
+    
+    getIcon(category) {
+        const icons = {
+            'Burgers': 'fas fa-hamburger',
+            'Pizzas': 'fas fa-pizza-slice',
+            'Drinks': 'fas fa-glass-cheers',
+            'Sides': 'fas fa-cookie-bite'
+        };
+        return icons[category] || 'fas fa-utensils';
+    }
+    
+    renderCart() {
+        const cartContainer = document.getElementById('cart-items');
+        const emptyCart = document.getElementById('empty-cart');
+        const template = document.getElementById('cart-item-template');
+        
+        if (this.items.length === 0) {
+            cartContainer.innerHTML = '';
+            emptyCart.style.display = 'block';
+            document.getElementById('checkout-btn').disabled = true;
+            return;
+        }
+        
+        emptyCart.style.display = 'none';
+        document.getElementById('checkout-btn').disabled = false;
+        cartContainer.innerHTML = '';
+        
+        this.items.forEach(item => {
+            const clone = template.content.cloneNode(true);
+            const cartItem = clone.querySelector('.cart-item');
+            
+            cartItem.setAttribute('data-item-id', item.id);
+            cartItem.querySelector('.item-icon').className = this.getIcon(item.category);
+            cartItem.querySelector('.item-name').textContent = item.name;
+            cartItem.querySelector('.item-category').textContent = item.category;
+            cartItem.querySelector('.item-price').textContent = `R${parseFloat(item.price).toFixed(2)}`;
+            cartItem.querySelector('.item-quantity').textContent = item.quantity;
+            
+            // Quantity controls
+            const decreaseBtn = cartItem.querySelector('.decrease');
+            const increaseBtn = cartItem.querySelector('.increase');
+            const removeBtn = cartItem.querySelector('.remove-item');
+            
+            decreaseBtn.addEventListener('click', () => {
+                this.updateQuantity(item.id, item.quantity - 1);
+            });
+            
+            increaseBtn.addEventListener('click', () => {
+                this.updateQuantity(item.id, item.quantity + 1);
+            });
+            
+            removeBtn.addEventListener('click', () => {
+                this.removeItem(item.id);
+            });
+            
+            cartContainer.appendChild(cartItem);
+        });
+    }
+    
+    updateSummary() {
+        const subtotal = this.items.reduce((sum, item) => sum + (parseFloat(item.price) * parseInt(item.quantity)), 0);
+        const deliveryFee = subtotal > 0 ? 3.99 : 0;
+        const tax = subtotal * 0.0825;
+        const total = subtotal + deliveryFee + tax;
+        
+        document.getElementById('subtotal').textContent = `R${subtotal.toFixed(2)}`;
+        document.getElementById('delivery-fee').textContent = `R${deliveryFee.toFixed(2)}`;
+        document.getElementById('tax').textContent = `R${tax.toFixed(2)}`;
+        document.getElementById('total').textContent = `R${total.toFixed(2)}`;
+        
+        const checkoutBtn = document.getElementById('checkout-btn');
+        checkoutBtn.disabled = this.items.length === 0;
+    }
+    
+    bindEvents() {
+        // Checkout button
+        document.getElementById('checkout-btn').addEventListener('click', () => {
+            if (this.items.length > 0) {
+                // Save cart to localStorage before redirecting
+                this.saveCart();
+                window.location.href = '/checkout/';
+            }
+        });
+        
+        // Promo code
+        document.getElementById('apply-promo').addEventListener('click', () => {
+            const promoCode = document.getElementById('promo-code').value;
+            if (promoCode) {
+                this.showToast('Promo code functionality coming soon!');
+            }
+        });
+        
+        // Enter key in promo code field
+        document.getElementById('promo-code').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                document.getElementById('apply-promo').click();
+            }
+        });
+    }
+    
+    showToast(message) {
+        const toast = document.getElementById('toast');
+        const toastMessage = document.getElementById('toast-message');
+        
+        if (toast && toastMessage) {
+            toastMessage.textContent = message;
+            toast.classList.remove('translate-y-full');
+            toast.classList.add('translate-y-0');
+            
+            setTimeout(() => {
+                toast.classList.remove('translate-y-0');
+                toast.classList.add('translate-y-full');
+            }, 3000);
+        }
+    }
+    
+    clearCart() {
+        this.items = [];
+        this.saveCart();
+        this.renderCart();
+        this.updateSummary();
+    }
+}
+
+// Initialize cart when page loads
+document.addEventListener('DOMContentLoaded', () => {
+    window.shoppingCart = new ShoppingCart();
+    
+    // Listen for cart updates from other pages
+    window.addEventListener('storage', (e) => {
+        if (e.key === 'ramza_cart') {
+            if (window.shoppingCart) {
+                window.shoppingCart.items = JSON.parse(e.newValue || '[]');
+                window.shoppingCart.renderCart();
+                window.shoppingCart.updateSummary();
+            }
+        }
+    });
+    
+    // Listen for custom cart update events
+    window.addEventListener('cartUpdated', (e) => {
+        if (window.shoppingCart) {
+            window.shoppingCart.items = e.detail;
+            window.shoppingCart.renderCart();
+            window.shoppingCart.updateSummary();
+        }
+    });
+});
+
+// Add item to cart function (called from menu page)
+function addToCart(item) {
+    if (window.shoppingCart) {
+        window.shoppingCart.addItem(item);
+    } else {
+        // Initialize cart if not already done
+        window.shoppingCart = new ShoppingCart();
+        window.shoppingCart.addItem(item);
+    }
+}
+</script>
+{% endblock %}
