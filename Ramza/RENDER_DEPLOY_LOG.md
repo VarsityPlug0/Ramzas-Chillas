@@ -12,4 +12,10 @@
 - Media files now properly deployed to Render
 - Menu items and products should now display images correctly
 
+## Deployment Triggered: Improve API error handling
+- Added better error handling to all API endpoints
+- Prevents blank pages when image URLs cannot be generated
+- Added fallbacks for missing images
+- Improved logging for debugging purposes
+
 This change will trigger a new deployment on Render.
