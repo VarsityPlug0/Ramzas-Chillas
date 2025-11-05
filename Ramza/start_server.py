@@ -21,6 +21,23 @@ if current_dir not in sys.path:
 os.chdir(current_dir)
 print(f"Changed directory to: {os.getcwd()}")
 
+# Update frontend template with correct hashed filenames
+print("Updating frontend template with correct hashed filenames...")
+try:
+    update_script = os.path.join(current_dir, 'update_frontend_template.py')
+    if os.path.exists(update_script):
+        import subprocess
+        result = subprocess.run([sys.executable, update_script], 
+                              capture_output=True, text=True)
+        if result.returncode == 0:
+            print("✅ Frontend template updated successfully!")
+        else:
+            print(f"⚠️  Warning: Failed to update frontend template: {result.stderr}")
+    else:
+        print("⚠️  Warning: update_frontend_template.py not found")
+except Exception as e:
+    print(f"⚠️  Warning: Error updating frontend template: {e}")
+
 try:
     print("Setting up Django...")
     django.setup()
