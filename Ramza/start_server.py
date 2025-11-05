@@ -17,6 +17,10 @@ if current_dir not in sys.path:
     sys.path.insert(0, current_dir)
     print(f"Added {current_dir} to Python path")
 
+# Change to the directory where manage.py is located
+os.chdir(current_dir)
+print(f"Changed directory to: {os.getcwd()}")
+
 try:
     print("Setting up Django...")
     django.setup()
