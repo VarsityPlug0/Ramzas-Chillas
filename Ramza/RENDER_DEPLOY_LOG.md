@@ -28,4 +28,10 @@
 - Ensures consistent data structure between frontend and backend
 - Prevents React app from crashing due to data type mismatch
 
+## Deployment Triggered: Fix TypeError in Menu.jsx
+- Added proper type checking for search term and category data
+- Prevents 'c.toLowerCase is not a function' error
+- Ensures all data is properly validated before processing
+- Improves overall stability of the menu page
+
 This change will trigger a new deployment on Render.
