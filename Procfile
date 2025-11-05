@@ -1,1 +1,1 @@
-web: cd Ramza && python start_server.py
+web: python start_app.py
