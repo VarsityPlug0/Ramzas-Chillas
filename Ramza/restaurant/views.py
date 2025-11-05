@@ -6,7 +6,7 @@ from django.views import View
 import random
 import os
 from django.conf import settings
-from .models import Category, MenuItem, SiteSettings, ContentSection, SiteImage
+from .models import Category, MenuItem, SiteSettings, ContentSection, SiteImage, Testimonial
 
 # Fallback food images
 FOOD_IMAGES = [
@@ -130,7 +130,7 @@ def menu(request):
         
         # If no items exist, create fallback data
         if not menu_items_list:
-            # Create categories first
+            # Create Create categories first
             burger_cat, _ = Category.objects.get_or_create(name='Burgers', defaults={'sort_order': 1})
             pizza_cat, _ = Category.objects.get_or_create(name='Pizzas', defaults={'sort_order': 2})
             drinks_cat, _ = Category.objects.get_or_create(name='Drinks', defaults={'sort_order': 3})
