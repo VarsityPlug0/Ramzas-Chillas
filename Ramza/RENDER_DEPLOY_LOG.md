@@ -34,4 +34,9 @@
 - Ensures all data is properly validated before processing
 - Improves overall stability of the menu page
 
+## Deployment Triggered: Update frontend template with correct hashed filenames
+- Updated template to reference the latest built JavaScript and CSS files
+- Improved update script to correctly identify latest files by modification time
+- Enabled source maps for better debugging of frontend errors
+
 This change will trigger a new deployment on Render.
