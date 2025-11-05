@@ -267,6 +267,14 @@ def api_categories(request):
     try:
         categories = Category.objects.filter(is_active=True)
         categories_list = []
+        
+        # Add "All" category first
+        categories_list.append({
+            'name': 'All',
+            'description': 'All menu items',
+            'image': None
+        })
+        
         for cat in categories:
             # Safely handle image URL generation
             image_url = None
