@@ -2,6 +2,7 @@
 import os
 import sys
 import django
+import shutil
 from django.core.management import execute_from_command_line
 
 print("=== START SERVER SCRIPT ===")
