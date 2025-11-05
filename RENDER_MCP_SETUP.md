@@ -39,3 +39,7 @@ Once configured, you can use natural language commands such as:
 ## Security Note
 
 Keep this configuration file secure as it contains your Render API key.
+
+## Deployment Status
+
+We've also fixed the deployment issue with the Ramzas Chillas application by creating a root-level start script that properly handles directory changes. The application should now deploy successfully on Render.
