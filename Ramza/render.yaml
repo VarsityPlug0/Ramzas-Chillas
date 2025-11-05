@@ -2,8 +2,8 @@ services:
   - type: web
     name: RamzaKitchen
     env: python
-    buildCommand: "pip install -r requirements.txt"
-    startCommand: "python start_server.py"
+    buildCommand: "cd Ramza && pip install -r requirements.txt"
+    startCommand: "cd Ramza && python start_server.py"
     envVars:
       - key: DATABASE_URL
         sync: false
