@@ -18,4 +18,9 @@
 - Added fallbacks for missing images
 - Improved logging for debugging purposes
 
+## Deployment Triggered: Fix Testimonial API import error
+- Fixed missing Testimonial import in views.py
+- Resolves 500 error causing blank white page
+- Testimonials API now works correctly
+
 This change will trigger a new deployment on Render.
