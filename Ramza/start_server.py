@@ -39,6 +39,36 @@ try:
 except Exception as e:
     print(f"⚠️  Warning: Error updating frontend template: {e}")
 
+# Copy built frontend files to static directory if they don't exist
+print("Ensuring frontend assets are in static directory...")
+try:
+    frontend_dist = os.path.join(current_dir, 'frontend', 'dist')
+    static_assets = os.path.join(current_dir, 'static', 'assets')
+    
+    if os.path.exists(frontend_dist):
+        print(f"Found frontend dist directory: {frontend_dist}")
+        # Copy files from dist to static
+        if not os.path.exists(static_assets):
+            os.makedirs(static_assets)
+            print(f"Created static assets directory: {static_assets}")
+        
+        # Copy all files from dist to static
+        for item in os.listdir(frontend_dist):
+            source = os.path.join(frontend_dist, item)
+            destination = os.path.join(static_assets, item)
+            if os.path.isfile(source):
+                shutil.copy2(source, destination)
+                print(f"Copied {item} to static assets")
+            elif os.path.isdir(source):
+                if os.path.exists(destination):
+                    shutil.rmtree(destination)
+                shutil.copytree(source, destination)
+                print(f"Copied directory {item} to static assets")
+    else:
+        print(f"Frontend dist directory not found: {frontend_dist}")
+except Exception as e:
+    print(f"⚠️  Warning: Error copying frontend assets: {e}")
+
 try:
     print("Setting up Django...")
     django.setup()
