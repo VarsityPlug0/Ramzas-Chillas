@@ -23,4 +23,9 @@
 - Resolves 500 error causing blank white page
 - Testimonials API now works correctly
 
+## Deployment Triggered: Fix categories API data structure
+- Fixed categories API to include 'All' category as object
+- Ensures consistent data structure between frontend and backend
+- Prevents React app from crashing due to data type mismatch
+
 This change will trigger a new deployment on Render.
