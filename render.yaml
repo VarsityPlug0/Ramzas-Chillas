@@ -3,7 +3,7 @@ services:
     name: RamzaKitchen
     env: python
     buildCommand: "pip install -r requirements.txt"
-    startCommand: "bash start_app.sh"
+    startCommand: "python start_server.py"
     envVars:
       - key: DATABASE_URL
         sync: false
