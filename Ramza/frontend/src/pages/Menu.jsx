@@ -23,12 +23,14 @@ const Menu = () => {
     }
 
     // Filter by search term
-    if (searchTerm) {
+    if (searchTerm && typeof searchTerm === 'string') {
       const term = searchTerm.toLowerCase()
-      filtered = filtered.filter(item => 
-        item.name.toLowerCase().includes(term) || 
-        item.description.toLowerCase().includes(term)
-      )
+      filtered = filtered.filter(item => {
+        // Ensure item properties are strings before calling toLowerCase
+        const itemName = typeof item.name === 'string' ? item.name : ''
+        const itemDescription = typeof item.description === 'string' ? item.description : ''
+        return itemName.toLowerCase().includes(term) || itemDescription.toLowerCase().includes(term)
+      })
     }
 
     setFilteredItems(filtered)
@@ -117,43 +119,48 @@ const Menu = () => {
         {/* Category Filter */}
         <div className="mb-8 md:mb-12">
           <div className="flex flex-wrap justify-center gap-2 md:gap-3">
-            {categories.map((category, index) => (
-              <button
-                key={index}
-                onClick={() => setSelectedCategory(category.name || category)}
-                className={`category-btn px-4 py-2 md:px-6 md:py-3 rounded-2xl font-semibold text-sm md:text-base transition-all duration-300 ${
-                  selectedCategory === (category.name || category)
-                    ? 'bg-gradient-to-r from-primary-500 to-primary-600 text-white shadow-lg transform -translate-y-1'
-                    : 'bg-gray-100 text-gray-800 hover:bg-primary-500 hover:text-white'
-                }`}
-              >
-                {(category.name || category) === 'All' ? (
-                  <>
-                    <i className="fas fa-th-large mr-1.5 md:mr-2"></i>All Items
-                  </>
-                ) : (category.name || category) === 'Burgers' ? (
-                  <>
-                    <i className="fas fa-hamburger mr-1.5 md:mr-2"></i>{category.name || category}
-                  </>
-                ) : (category.name || category) === 'Pizzas' ? (
-                  <>
-                    <i className="fas fa-pizza-slice mr-1.5 md:mr-2"></i>{category.name || category}
-                  </>
-                ) : (category.name || category) === 'Drinks' ? (
-                  <>
-                    <i className="fas fa-glass-cheers mr-1.5 md:mr-2"></i>{category.name || category}
-                  </>
-                ) : (category.name || category) === 'Sides' ? (
-                  <>
-                    <i className="fas fa-cookie-bite mr-1.5 md:mr-2"></i>{category.name || category}
-                  </>
-                ) : (
-                  <>
-                    <i className="fas fa-utensils mr-1.5 md:mr-2"></i>{category.name || category}
-                  </>
-                )}
-              </button>
-            ))}
+            {categories.map((category, index) => {
+              // Ensure category is properly handled whether it's a string or object
+              const categoryName = typeof category === 'string' ? category : (category?.name || '');
+              
+              return (
+                <button
+                  key={index}
+                  onClick={() => setSelectedCategory(categoryName)}
+                  className={`category-btn px-4 py-2 md:px-6 md:py-3 rounded-2xl font-semibold text-sm md:text-base transition-all duration-300 ${
+                    selectedCategory === categoryName
+                      ? 'bg-gradient-to-r from-primary-500 to-primary-600 text-white shadow-lg transform -translate-y-1'
+                      : 'bg-gray-100 text-gray-800 hover:bg-primary-500 hover:text-white'
+                  }`}
+                >
+                  {categoryName === 'All' ? (
+                    <>
+                      <i className="fas fa-th-large mr-1.5 md:mr-2"></i>All Items
+                    </>
+                  ) : categoryName === 'Burgers' ? (
+                    <>
+                      <i className="fas fa-hamburger mr-1.5 md:mr-2"></i>{categoryName}
+                    </>
+                  ) : categoryName === 'Pizzas' ? (
+                    <>
+                      <i className="fas fa-pizza-slice mr-1.5 md:mr-2"></i>{categoryName}
+                    </>
+                  ) : categoryName === 'Drinks' ? (
+                    <>
+                      <i className="fas fa-glass-cheers mr-1.5 md:mr-2"></i>{categoryName}
+                    </>
+                  ) : categoryName === 'Sides' ? (
+                    <>
+                      <i className="fas fa-cookie-bite mr-1.5 md:mr-2"></i>{categoryName}
+                    </>
+                  ) : (
+                    <>
+                      <i className="fas fa-utensils mr-1.5 md:mr-2"></i>{categoryName}
+                    </>
+                  )}
+                </button>
+              );
+            })}
           </div>
         </div>
 
