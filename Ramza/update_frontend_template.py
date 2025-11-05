@@ -58,23 +58,28 @@ def update_template():
         template_content = f.read()
     
     # Update the template with correct filenames using the static URL pattern
-    updated_content = template_content.replace(
-        'src="/static/assets/index-d7e41e1b.js"',
-        f'src="/static/assets/{js_file}"'
+    # Handle both possible patterns that might be in the template
+    updated_content = re.sub(
+        r'src="/static/assets/index-[a-f0-9]+\.js"',
+        f'src="/static/assets/{js_file}"',
+        template_content
     )
-    updated_content = updated_content.replace(
-        'href="/static/assets/index-d1b45b4c.css"',
-        f'href="/static/assets/{css_file}"'
+    updated_content = re.sub(
+        r'href="/static/assets/index-[a-f0-9]+\.css"',
+        f'href="/static/assets/{css_file}"',
+        updated_content
     )
     
     # Also handle the original paths that might be in the template
-    updated_content = template_content.replace(
-        'src="/assets/index-d7e41e1b.js"',
-        f'src="/static/assets/{js_file}"'
+    updated_content = re.sub(
+        r'src="/assets/index-[a-f0-9]+\.js"',
+        f'src="/static/assets/{js_file}"',
+        updated_content
     )
-    updated_content = updated_content.replace(
-        'href="/assets/index-d1b45b4c.css"',
-        f'href="/static/assets/{css_file}"'
+    updated_content = re.sub(
+        r'href="/assets/index-[a-f0-9]+\.css"',
+        f'href="/static/assets/{css_file}"',
+        updated_content
     )
     
     # Write the updated template
