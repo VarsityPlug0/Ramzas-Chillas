@@ -39,4 +39,9 @@
 - Improved update script to correctly identify latest files by modification time
 - Enabled source maps for better debugging of frontend errors
 
+## Deployment Triggered: Add cache-busting query parameters
+- Added query parameters to static file URLs to prevent browser caching issues
+- Forces browsers to load the latest JavaScript and CSS files
+- Should resolve issues with outdated assets being served
+
 This change will trigger a new deployment on Render.
