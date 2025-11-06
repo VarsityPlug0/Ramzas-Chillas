@@ -1,109 +1,83 @@
 #!/usr/bin/env python
 """
-Script to build the React frontend and integrate it with Django
+Build script for frontend assets
 """
-
 import os
-import sys
 import subprocess
-import shutil
+import sys
 from pathlib import Path
 
 def build_frontend():
-    """Build the React frontend and copy assets to Django static directory"""
-    
-    # Get project paths
+    """Build the frontend assets"""
     project_root = Path(__file__).parent.absolute()
     frontend_dir = project_root / "frontend"
-    static_dir = project_root / "static"
-    build_dir = frontend_dir / "dist"
     
     print(f"Project root: {project_root}")
     print(f"Frontend directory: {frontend_dir}")
-    print(f"Static directory: {static_dir}")
-    print(f"Build directory: {build_dir}")
     
     # Check if frontend directory exists
     if not frontend_dir.exists():
         print("❌ Frontend directory not found!")
         return False
     
-    # Check if build directory exists
-    if not build_dir.exists():
-        print("❌ Build directory not found! Building frontend...")
-        # Change to frontend directory
-        os.chdir(frontend_dir)
-        
-        # Install npm dependencies if node_modules doesn't exist
-        node_modules_dir = frontend_dir / "node_modules"
-        if not node_modules_dir.exists():
-            print("📦 Installing npm dependencies...")
-            try:
-                subprocess.run(["npm", "install"], check=True)
-                print("✅ npm dependencies installed successfully!")
-            except subprocess.CalledProcessError as e:
-                print(f"❌ Failed to install npm dependencies: {e}")
-                return False
-        
-        # Build the React app
-        print("🔨 Building React frontend...")
-        try:
-            subprocess.run(["npm", "run", "build"], check=True)
-            print("✅ React frontend built successfully!")
-        except subprocess.CalledProcessError as e:
-            print(f"❌ Failed to build React frontend: {e}")
-            return False
+    # Change to frontend directory
+    os.chdir(frontend_dir)
+    print(f"Changed to frontend directory: {os.getcwd()}")
     
-    # Check if build was successful
-    if not build_dir.exists():
-        print("❌ Build directory not found!")
+    # Install npm dependencies
+    print("Installing npm dependencies...")
+    try:
+        result = subprocess.run(["npm", "install"], capture_output=True, text=True)
+        if result.returncode != 0:
+            print(f"❌ npm install failed: {result.stderr}")
+            return False
+        print("✅ npm dependencies installed successfully")
+    except Exception as e:
+        print(f"❌ Error running npm install: {e}")
         return False
     
-    # Create static directory if it doesn't exist
-    static_dir.mkdir(exist_ok=True)
+    # Build frontend
+    print("Building frontend...")
+    try:
+        result = subprocess.run(["npm", "run", "build"], capture_output=True, text=True)
+        if result.returncode != 0:
+            print(f"❌ Frontend build failed: {result.stderr}")
+            return False
+        print("✅ Frontend built successfully")
+    except Exception as e:
+        print(f"❌ Error running frontend build: {e}")
+        return False
     
-    # Copy built assets to static directory
-    print("📂 Copying built assets to Django static directory...")
+    # Change back to project root
+    os.chdir(project_root)
+    print(f"Changed back to project root: {os.getcwd()}")
     
-    # Copy all files from build directory to static
-    for item in build_dir.iterdir():
-        if item.is_file():
-            shutil.copy2(item, static_dir / item.name)
-            print(f"  📄 Copied {item.name}")
-        elif item.is_dir():
-            target_dir = static_dir / item.name
-            if target_dir.exists():
-                shutil.rmtree(target_dir)
-            shutil.copytree(item, target_dir)
-            print(f"  📁 Copied directory {item.name}")
+    # Copy built files to static directory
+    dist_dir = frontend_dir / "dist"
+    static_assets_dir = project_root / "static" / "assets"
     
-    print("✅ Frontend assets copied to static directory!")
+    if dist_dir.exists():
+        print(f"Copying built files from {dist_dir} to {static_assets_dir}")
+        # Create static assets directory if it doesn't exist
+        static_assets_dir.mkdir(parents=True, exist_ok=True)
+        
+        # Copy all files from dist to static assets
+        import shutil
+        for item in dist_dir.iterdir():
+            if item.is_file():
+                shutil.copy2(item, static_assets_dir / item.name)
+                print(f"Copied {item.name}")
+            elif item.is_dir():
+                dest_dir = static_assets_dir / item.name
+                if dest_dir.exists():
+                    shutil.rmtree(dest_dir)
+                shutil.copytree(item, dest_dir)
+                print(f"Copied directory {item.name}")
+        print("✅ Built files copied to static directory")
+    else:
+        print("❌ Dist directory not found!")
+        return False
     
-    # Create a simple index.html template for Django
-    templates_dir = project_root / "templates" / "frontend"
-    templates_dir.mkdir(exist_ok=True, parents=True)
-    
-    index_html_content = """<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="{% static 'favicon.ico' %}" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Ramza's Chillas - Chill Vibes & Hot Food</title>
-    <script type="module" crossorigin src="{% static 'index.js' %}"></script>
-    <link rel="stylesheet" href="{% static 'index.css' %}">
-  </head>
-  <body>
-    <div id="root"></div>
-  </body>
-</html>"""
-    
-    index_html_path = templates_dir / "index.html"
-    with open(index_html_path, 'w') as f:
-        f.write(index_html_content)
-    
-    print("✅ Django template created!")
-    print("🎉 Frontend build and integration completed successfully!")
     return True
 
 if __name__ == "__main__":

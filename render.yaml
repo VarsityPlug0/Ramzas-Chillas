@@ -2,7 +2,7 @@ services:
   - type: web
     name: RamzaKitchen
     env: python
-    buildCommand: "pip install -r requirements.txt && cd frontend && npm install && npm run build && cd .. && python manage.py collectstatic --noinput"
+    buildCommand: "pip install -r requirements.txt && python build_frontend.py && python manage.py collectstatic --noinput"
     startCommand: "python start_server.py"
     envVars:
       - key: DATABASE_URL
