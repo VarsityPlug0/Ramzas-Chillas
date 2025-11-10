@@ -126,20 +126,43 @@ except Exception as e:
     print(f"Error creating superuser: {e}")
     # Don't exit on superuser error as it's not critical for the app to run
 
-# Start Django development server
-print("Starting Django development server...")
-port = os.environ.get('PORT', '8000')
-print(f"Binding to port {port}")
+# Check if we're running in production (Render environment)
+is_production = 'RENDER' in os.environ
 
-try:
-    execute_from_command_line([
-        'manage.py', 
-        'runserver', 
-        f'0.0.0.0:{port}',
-        '--noreload'
-    ])
-except Exception as e:
-    print(f"Error starting Django development server: {e}")
-    import traceback
-    traceback.print_exc()
-    sys.exit(1)
+if is_production:
+    # Start Gunicorn server in production
+    print("Starting Gunicorn server...")
+    port = os.environ.get('PORT', '8000')
+    print(f"Binding to port {port}")
+    
+    try:
+        os.execvp('gunicorn', [
+            'gunicorn', 
+            'fastfood_restaurant.wsgi:application', 
+            '--bind', f'0.0.0.0:{port}',
+            '--workers', '4',
+            '--timeout', '120'
+        ])
+    except Exception as e:
+        print(f"Error starting Gunicorn: {e}")
+        import traceback
+        traceback.print_exc()
+        sys.exit(1)
+else:
+    # Start Django development server locally
+    print("Starting Django development server...")
+    port = os.environ.get('PORT', '8000')
+    print(f"Binding to port {port}")
+    
+    try:
+        execute_from_command_line([
+            'manage.py', 
+            'runserver', 
+            f'0.0.0.0:{port}',
+            '--noreload'
+        ])
+    except Exception as e:
+        print(f"Error starting Django development server: {e}")
+        import traceback
+        traceback.print_exc()
+        sys.exit(1)

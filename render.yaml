@@ -11,3 +11,5 @@ services:
         sync: false
       - key: WEB_CONCURRENCY
         value: 4
+      - key: CSRF_TRUSTED_ORIGINS
+        value: https://ramzas-chillas.onrender.com,https://ramza-ut50.onrender.com,https://ramzakitchen.onrender.com,https://ramzas-chillas.site

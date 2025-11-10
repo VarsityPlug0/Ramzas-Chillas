@@ -36,6 +36,14 @@ ALLOWED_HOSTS = [
     'ramzas-chillas.site',  # Add the new Render domain
 ] if 'ALLOWED_HOSTS' not in os.environ else os.environ['ALLOWED_HOSTS'].split(',')
 
+# CSRF trusted origins
+CSRF_TRUSTED_ORIGINS = [
+    'https://ramzas-chillas.onrender.com',
+    'https://ramza-ut50.onrender.com',
+    'https://ramzakitchen.onrender.com',
+    'https://ramzas-chillas.site',
+] if 'CSRF_TRUSTED_ORIGINS' not in os.environ else os.environ['CSRF_TRUSTED_ORIGINS'].split(',')
+
 
 # Application definition
 
