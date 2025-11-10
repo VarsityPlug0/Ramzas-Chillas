@@ -178,6 +178,9 @@ if not DEBUG:
     WHITENOISE_USE_FINDERS = True
     WHITENOISE_AUTOREFRESH = True
     WHITENOISE_MANIFEST_STRICT = False
+    
+    # Add WhiteNoise middleware
+    MIDDLEWARE.insert(1, 'whitenoise.middleware.WhiteNoiseMiddleware')
 
 # Media files
 MEDIA_URL = '/media/'

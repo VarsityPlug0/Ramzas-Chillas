@@ -26,6 +26,7 @@ export default defineConfig({
   base: '/',
   // Add build configuration for SPA
   build: {
+    sourcemap: true, // Enable source maps for better debugging
     rollupOptions: {
       output: {
         manualChunks: undefined

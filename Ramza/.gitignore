@@ -58,7 +58,8 @@ coverage.xml
 local_settings.py
 db.sqlite3
 db.sqlite3-journal
-media/
+# Commenting out media/ so media files can be deployed
+# media/
 
 # Flask stuff:
 instance/
@@ -141,4 +142,5 @@ Thumbs.db
 .env
 
 # Media files (excluding media files from version control)
-media/
+# Commenting out to allow media files to be deployed
+# media/

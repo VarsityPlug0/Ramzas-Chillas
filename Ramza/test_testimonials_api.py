@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """
-Script to test the categories API endpoint
+Script to test the testimonials API endpoint
 """
 
 import os
@@ -26,13 +26,13 @@ except Exception as e:
     sys.exit(1)
 
 # Import views and request
-from restaurant.views import api_categories
+from restaurant.views import api_testimonials
 from django.http import HttpRequest
 
-def test_categories_api():
-    """Test the categories API endpoint"""
+def test_testimonials_api():
+    """Test the testimonials API endpoint"""
     
-    print("Testing categories API endpoint...")
+    print("Testing testimonials API endpoint...")
     
     # Create a mock request
     request = HttpRequest()
@@ -40,7 +40,7 @@ def test_categories_api():
     
     try:
         # Get the API response
-        response = api_categories(request)
+        response = api_testimonials(request)
         
         # Print the response data
         print("API Response Status Code:", response.status_code)
@@ -51,13 +51,8 @@ def test_categories_api():
         try:
             data = json.loads(response.content.decode('utf-8'))
             print("\n✅ JSON is valid")
-            print(f"Categories count: {len(data.get('categories', []))}")
+            print(f"Testimonials count: {len(data.get('testimonials', []))}")
             
-            # Print category details
-            for i, cat in enumerate(data.get('categories', [])):
-                print(f"  Category {i+1}: {cat.get('name', 'Unknown')}")
-                print(f"    Image URL: {cat.get('image', 'None')}")
-                
         except json.JSONDecodeError as e:
             print(f"\n❌ JSON is invalid: {e}")
             
@@ -67,4 +62,4 @@ def test_categories_api():
         traceback.print_exc()
 
 if __name__ == "__main__":
-    test_categories_api()
+    test_testimonials_api()
