@@ -58,7 +58,8 @@ if settings.DEBUG:
 
 # Additional media file serving for production environments
 # This ensures media files are served even when DEBUG=False
-if not settings.DEBUG:
+# Only serve media files locally if not using cloud storage
+if not settings.DEBUG and 'DEFAULT_FILE_STORAGE' not in dir(settings):
     from django.views.static import serve
     from django.urls import re_path
     urlpatterns += [
